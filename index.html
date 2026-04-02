@@ -144,6 +144,8 @@
     .role-tag { font-family:var(--mono); font-size:0.65rem; padding:0.15rem 0.5rem; border-radius:3px; text-transform:uppercase; letter-spacing:0.06em; }
     .role-admin { background:rgba(245,197,24,0.1); color:var(--gold); border:1px solid rgba(245,197,24,0.25); }
     .role-member { background:rgba(124,92,252,0.1); color:var(--accent2); border:1px solid rgba(124,92,252,0.25); }
+    .role-mod { background:rgba(0,240,160,0.07); color:#5cffa0; border:1px solid rgba(0,240,160,0.2); }
+    .avatar-mod { background:rgba(0,240,160,0.1); color:#5cffa0; border:1px solid rgba(0,240,160,0.25); }
     .btn-logout { font-family:var(--mono); font-size:0.7rem; color:var(--muted); background:none; border:1px solid var(--border); padding:0.3rem 0.7rem; border-radius:4px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
     .btn-logout:hover { border-color:var(--accent3); color:var(--accent3); }
     .btn-admin-panel { font-family:var(--mono); font-size:0.7rem; color:var(--gold); background:rgba(245,197,24,0.08); border:1px solid rgba(245,197,24,0.3); padding:0.3rem 0.7rem; border-radius:4px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
@@ -338,6 +340,21 @@
   </div>
 </div>
 
+<!-- ═══════════ MOD PANEL ═══════════ -->
+<div id="mod-panel" style="display:none;position:fixed;inset:0;z-index:400;background:var(--bg);overflow-y:auto;">
+  <div class="admin-header">
+    <div class="admin-title"><span>🛡</span><span style="color:var(--accent2)">Panneau Modérateur</span><span style="color:var(--muted);font-size:0.75rem;font-family:var(--mono)">HardCore Academy</span></div>
+    <button class="btn-close-admin" onclick="closeModPanel()">← Retour au site</button>
+  </div>
+  <div class="admin-body">
+    <div class="admin-info-box" style="border-color:rgba(124,92,252,0.25);background:rgba(124,92,252,0.05);"><span style="color:var(--accent2)">🛡 Connecté en tant que Modérateur</span><br>Tu peux offrir l'accès Premium aux membres.</div>
+    <div>
+      <div class="admin-section-title">👥 Membres — Gestion Premium</div>
+      <div style="overflow-x:auto;"><table class="members-table"><thead><tr><th>Prénom</th><th>E-mail</th><th>Accès</th><th>Inscrit le</th><th>Action</th></tr></thead><tbody id="mod-members-tbody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════ PAYWALL ═══════════ -->
 <div class="paywall-overlay" id="paywall">
   <div class="paywall-box">
@@ -359,7 +376,7 @@
 </a>
     <button class="paywall-cancel" onclick="closePaywall()">Non merci, continuer sans premium</button>
     <div class="stripe-badge">🔒 Paiement sécurisé par <strong style="color:var(--accent2)">Stripe</strong> · Données jamais stockées</div>
-    <div style="margin-top:0.6rem;font-family:var(--mono);font-size:0.62rem;color:var(--muted);opacity:0.55;line-height:1.6;text-align:center;">⚠ Utilise la même adresse e-mail que ton compte.<br>Le déblocage Premium peut prendre jusqu'à 24h après l'achat.</div>
+    <div style="margin-top:0.9rem;font-family:var(--mono);font-size:0.72rem;color:var(--muted);line-height:1.7;text-align:center;border-top:1px solid var(--border);padding-top:0.75rem;">⚠ Utilise bien la <strong style="color:var(--text)">même adresse e-mail</strong> que ton compte · le déblocage peut prendre <strong style="color:var(--text)">jusqu'à 24h</strong></div>
   </div>
 </div>
 
@@ -459,6 +476,7 @@ function getSession()  { return JSON.parse(sessionStorage.getItem(SK_SESSION) ||
 function saveSession(u, remember){ sessionStorage.setItem(SK_SESSION, JSON.stringify(u)); if(remember) localStorage.setItem(SK_SESSION, JSON.stringify(u)); }
 function clearSession(){ sessionStorage.removeItem(SK_SESSION); localStorage.removeItem(SK_SESSION); }
 function isAdmin(u)    { return u && u.role === 'admin'; }
+function isMod(u)      { return u && (u.role === 'moderateur' || u.role === 'admin'); }
 function isPremium(u)  { return u && (u.role === 'admin' || u.premium); }
 
 /* ═══════════════════════════════════════════════════
@@ -580,8 +598,13 @@ function enterSite() {
 function renderHeader(u) {
   const initials = u.name.slice(0,2).toUpperCase();
   const isAdm    = isAdmin(u);
-  let html = `<div class="user-badge"><div class="user-avatar ${isAdm?'avatar-admin':'avatar-member'}">${initials}</div><div><div style="color:var(--text);font-size:0.82rem;">${u.name}</div><div class="role-tag ${isAdm?'role-admin':'role-member'}">${isAdm?'👑 Admin':'Membre'}</div></div></div>`;
+  const isModRole = isMod(u) && !isAdm;
+  const avatarClass = isAdm ? 'avatar-admin' : isModRole ? 'avatar-mod' : 'avatar-member';
+  const roleClass   = isAdm ? 'role-admin'   : isModRole ? 'role-mod'   : 'role-member';
+  const roleLabel   = isAdm ? '👑 Admin'     : isModRole ? '🛡 Modérateur' : 'Membre';
+  let html = `<div class="user-badge"><div class="user-avatar ${avatarClass}">${initials}</div><div><div style="color:var(--text);font-size:0.82rem;">${u.name}</div><div class="role-tag ${roleClass}">${roleLabel}</div></div></div>`;
   if (isAdm) html += `<button class="btn-admin-panel" onclick="openAdmin()">⚙ Admin</button>`;
+  if (!isAdm && isMod(u)) html += `<button class="btn-admin-panel" style="color:var(--accent2);background:rgba(124,92,252,0.08);border-color:rgba(124,92,252,0.3);" onclick="openModPanel()">🛡 Modération</button>`;
   if (!isAdm && !isPremium(u)) html += `<button style="color:var(--accent);background:rgba(0,240,160,0.08);border:1px solid rgba(0,240,160,0.3);font-family:var(--mono);font-size:0.7rem;padding:0.3rem 0.7rem;border-radius:4px;cursor:pointer;" onclick="openPaywall()">⭐ Passer Premium</button>`;
   if (isPremium(u) && !isAdm) html += `<span style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);">⭐ Premium</span>`;
   html += `<button class="btn-logout" onclick="logout()">Déconnexion</button>`;
@@ -679,6 +702,40 @@ async function checkPaymentReturn() {
   }
 }
 
+function openModPanel() {
+  if (!isMod(getSession())) return;
+  document.getElementById('mod-panel').style.display='block';
+  renderModMembers();
+}
+function closeModPanel() { document.getElementById('mod-panel').style.display='none'; }
+
+function renderModMembers() {
+  const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
+  if (users.length === 0) {
+    document.getElementById('mod-members-tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem;font-family:var(--mono);font-size:0.8rem;">Aucun membre inscrit.</td></tr>`;
+    return;
+  }
+  const rows = users.filter(u=>u.role!=='admin').map((u,i)=>`
+    <tr>
+      <td style="color:var(--text)">${u.name}</td>
+      <td class="td-email">${u.email}</td>
+      <td class="${u.premium?'td-premium':'td-free'}">${u.premium?'⭐ Premium':'Gratuit'}</td>
+      <td style="font-family:var(--mono);font-size:0.7rem;">${u.createdAt||'—'}</td>
+      <td>${!u.premium?`<button class="btn-grant" onclick="modGrantPremium('${u.email}')">⭐ Offrir Premium</button>`:'<span style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);">✓ Déjà Premium</span>'}</td>
+    </tr>`).join('');
+  document.getElementById('mod-members-tbody').innerHTML = rows || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem;font-family:var(--mono);font-size:0.8rem;">Aucun membre.</td></tr>`;
+}
+
+function modGrantPremium(email) {
+  const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
+  const idx = users.findIndex(u => u.email === email);
+  if (idx === -1) return;
+  users[idx].premium = true;
+  localStorage.setItem('hca_users', JSON.stringify(users));
+  renderModMembers();
+  toast('⭐ Premium offert à ' + users[idx].name, 'success');
+}
+
 function openPaywall()  { document.getElementById('paywall').classList.add('open'); }
 function closePaywall() { document.getElementById('paywall').classList.remove('open'); }
 
@@ -750,7 +807,14 @@ function renderMembersTable() {
   const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
   const adminRow = `<tr><td style="color:var(--text)">Kevin</td><td class="td-email">${ADMIN.email}</td><td class="td-role-admin">👑 Admin</td><td class="td-premium">∞ Illimité</td><td style="font-family:var(--mono);font-size:0.7rem;">Fondateur</td><td>—</td></tr>`;
   if (users.length===0) { document.getElementById('members-tbody').innerHTML=adminRow+`<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;font-family:var(--mono);font-size:0.8rem;">Aucun membre inscrit.</td></tr>`; return; }
-  const rows = users.map((u,i)=>`<tr><td style="color:var(--text)">${u.name}</td><td class="td-email">${u.email}</td><td class="${u.role==='admin'?'td-role-admin':'td-role-member'}">${u.role==='admin'?'👑 Admin':'Membre'}</td><td class="${u.premium?'td-premium':'td-free'}">${u.premium?'⭐ Premium':'Gratuit'}</td><td style="font-family:var(--mono);font-size:0.7rem;">${u.createdAt||'—'}</td><td>${!u.premium?`<button class="btn-grant" onclick="grantPremium(${i})">⭐ Offrir</button>`:''}<button class="btn-del" onclick="deleteMember(${i})">✕</button></td></tr>`).join('');
+  const rows = users.map((u,i)=>{
+    const roleLbl = u.role==='admin' ? '👑 Admin' : u.role==='moderateur' ? '🛡 Modérateur' : 'Membre';
+    const roleClass = u.role==='admin' ? 'td-role-admin' : u.role==='moderateur' ? 'td-role-admin' : 'td-role-member';
+    const modBtn = u.role!=='admin' ? (u.role==='moderateur'
+      ? `<button class="btn-grant" style="border-color:rgba(255,77,109,0.3);color:var(--accent3);" onclick="toggleMod(${i})">✕ Mod</button>`
+      : `<button class="btn-grant" style="color:var(--accent2);border-color:rgba(124,92,252,0.3);" onclick="toggleMod(${i})">🛡 Mod</button>`) : '';
+    return `<tr><td style="color:var(--text)">${u.name}</td><td class="td-email">${u.email}</td><td class="${roleClass}">${roleLbl}</td><td class="${u.premium?'td-premium':'td-free'}">${u.premium?'⭐ Premium':'Gratuit'}</td><td style="font-family:var(--mono);font-size:0.7rem;">${u.createdAt||'—'}</td><td>${!u.premium?`<button class="btn-grant" onclick="grantPremium(${i})">⭐ Offrir</button>`:''} ${modBtn}<button class="btn-del" onclick="deleteMember(${i})">✕</button></td></tr>`;
+  }).join('');
   document.getElementById('members-tbody').innerHTML = adminRow + rows;
 }
 
@@ -768,6 +832,15 @@ function deleteMember(i) {
   localStorage.setItem('hca_users',JSON.stringify(users));
   renderMembersTable(); renderAdminStats();
   toast('🗑 '+name+' supprimé','error');
+}
+
+function toggleMod(i) {
+  const users=JSON.parse(localStorage.getItem('hca_users')||'[]');
+  const wasMod = users[i].role === 'moderateur';
+  users[i].role = wasMod ? 'member' : 'moderateur';
+  localStorage.setItem('hca_users',JSON.stringify(users));
+  renderMembersTable(); renderAdminStats();
+  toast(wasMod ? '🛡 Rôle modérateur retiré' : '🛡 '+users[i].name+' est maintenant modérateur', wasMod?'info':'success');
 }
 
 function renderAdminLessons() {
