@@ -432,12 +432,83 @@
    ⚙ CONFIG — MODIFIER CES VALEURS
 ═══════════════════════════════════════════════════ */
 const CONFIG = {
-  // URL de ton backend (ex: https://hardcore-academy.vercel.app)
-  // En local : http://localhost:3000
   API_URL: 'http://localhost:3000',
+  ADMIN_KEY: 'change_moi_avec_une_cle_tres_longue_et_aleatoire_123456',
 
-  // Clé admin secrète (doit correspondre à ADMIN_KEY dans .env)
-  ADMIN_KEY: 'change_moi_avec_une_cle_tres_longue_et_aleatoire_123456'
+  // ⚙ SUPABASE — colle tes clés ici
+  SUPABASE_URL: 'COLLE_TON_PROJECT_URL_ICI',
+  SUPABASE_KEY: 'COLLE_TA_ANON_KEY_ICI'
+};
+
+// ─── Client Supabase (sans librairie, appels REST directs) ───
+const SB = {
+  url: CONFIG.SUPABASE_URL,
+  key: CONFIG.SUPABASE_KEY,
+
+  async query(table, options = {}) {
+    let url = `${this.url}/rest/v1/${table}`;
+    const params = [];
+    if (options.select)  params.push(`select=${options.select}`);
+    if (options.eq)      Object.entries(options.eq).forEach(([k,v]) => params.push(`${k}=eq.${encodeURIComponent(v)}`));
+    if (options.order)   params.push(`order=${options.order}`);
+    if (params.length)   url += '?' + params.join('&');
+
+    const res = await fetch(url, {
+      headers: {
+        'apikey': this.key,
+        'Authorization': 'Bearer ' + this.key,
+        'Content-Type': 'application/json',
+        'Prefer': options.single ? 'return=representation' : 'return=representation'
+      }
+    });
+    const data = await res.json();
+    if (options.single) return Array.isArray(data) ? data[0] || null : data;
+    return data;
+  },
+
+  async insert(table, row) {
+    const res = await fetch(`${this.url}/rest/v1/${table}`, {
+      method: 'POST',
+      headers: {
+        'apikey': this.key,
+        'Authorization': 'Bearer ' + this.key,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(row)
+    });
+    const data = await res.json();
+    return Array.isArray(data) ? data[0] : data;
+  },
+
+  async update(table, row, eq) {
+    let url = `${this.url}/rest/v1/${table}?`;
+    url += Object.entries(eq).map(([k,v]) => `${k}=eq.${encodeURIComponent(v)}`).join('&');
+    const res = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'apikey': this.key,
+        'Authorization': 'Bearer ' + this.key,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(row)
+    });
+    const data = await res.json();
+    return Array.isArray(data) ? data[0] : data;
+  },
+
+  async delete(table, eq) {
+    let url = `${this.url}/rest/v1/${table}?`;
+    url += Object.entries(eq).map(([k,v]) => `${k}=eq.${encodeURIComponent(v)}`).join('&');
+    await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'apikey': this.key,
+        'Authorization': 'Bearer ' + this.key
+      }
+    });
+  }
 };
 
 /* ═══════════════════════════════════════════════════
@@ -455,7 +526,7 @@ const ADMIN = {
 ═══════════════════════════════════════════════════ */
 const SK_SESSION = 'hca_session';
 const SK_FREE    = 'hca_free_lessons';
-let freeLessons  = JSON.parse(localStorage.getItem(SK_FREE) || '["cpu"]');
+let freeLessons  = ['cpu']; // chargé depuis Supabase au démarrage
 
 const LESSONS_META = [
   { id:'cpu',             num:'01', icon:'🧠', color:'rgba(0,240,160,0.08)',   title:'Le Processeur (CPU)',           desc:'Architecture, cycles d\'horloge, cœurs, threads.',           level:'debutant',      time:'~25 min', section:'lecons'    },
@@ -519,17 +590,21 @@ async function doLogin(e) {
     enterSite(); return;
   }
 
-  // Backend login
-  const res = await api('/api/login', 'POST', { email, pwd });
-  if (res && res.ok) {
-    saveSession(res.user, remember);
-    enterSite();
-  } else {
-    // Fallback localStorage
-    const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
-    const user  = users.find(u => u.email.toLowerCase()===email && u.pwd===pwd);
-    if (user) { saveSession(user, remember); enterSite(); }
-    else { err.textContent = res?.error || '❌ Email ou mot de passe incorrect.'; err.classList.add('show'); btn.disabled=false; btn.textContent='Se connecter →'; }
+  // Supabase login
+  try {
+    const user = await SB.query('users', { eq: { email, pwd }, single: true });
+    if (user && user.id) {
+      saveSession({ name:user.name, email:user.email, role:user.role, premium:user.premium }, remember);
+      enterSite();
+    } else {
+      err.textContent = '❌ Email ou mot de passe incorrect.';
+      err.classList.add('show');
+      btn.disabled=false; btn.textContent='Se connecter →';
+    }
+  } catch(e) {
+    err.textContent = '❌ Erreur de connexion. Réessaie.';
+    err.classList.add('show');
+    btn.disabled=false; btn.textContent='Se connecter →';
   }
 }
 
@@ -549,24 +624,28 @@ async function doRegister(e) {
     btn.disabled=false; btn.textContent='Créer mon compte →'; return;
   }
 
-  // Try backend
-  const res = await api('/api/register', 'POST', { name, email, pwd });
-  if (res && res.ok) {
-    ok.textContent='✓ Compte créé ! Connexion en cours…'; ok.classList.add('show');
-    saveSession(res.user);
-    setTimeout(() => enterSite(), 1000);
-  } else {
-    // Fallback localStorage
-    const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
-    if (users.find(u => u.email.toLowerCase()===email)) {
+  try {
+    // Vérifier si email déjà utilisé
+    const existing = await SB.query('users', { eq: { email }, single: true });
+    if (existing && existing.id && existing.pwd !== '') {
       err.textContent='❌ Un compte existe déjà avec cet email.'; err.classList.add('show');
       btn.disabled=false; btn.textContent='Créer mon compte →'; return;
     }
-    const newUser = { name, email, pwd, role:'member', premium:false, createdAt:new Date().toLocaleDateString('fr-FR') };
-    users.push(newUser); localStorage.setItem('hca_users', JSON.stringify(users));
-    ok.textContent='✓ Compte créé !'; ok.classList.add('show');
-    saveSession(newUser);
-    setTimeout(() => enterSite(), 800);
+
+    let user;
+    if (existing && existing.id) {
+      // Compte pré-créé par paiement Stripe avant inscription
+      user = await SB.update('users', { name, pwd }, { email });
+    } else {
+      user = await SB.insert('users', { name, email, pwd, role: 'member', premium: false });
+    }
+
+    ok.textContent='✓ Compte créé ! Connexion en cours…'; ok.classList.add('show');
+    saveSession({ name: user.name, email: user.email, role: user.role, premium: user.premium });
+    setTimeout(() => enterSite(), 1000);
+  } catch(e) {
+    err.textContent='❌ Erreur lors de la création. Réessaie.'; err.classList.add('show');
+    btn.disabled=false; btn.textContent='Créer mon compte →';
   }
 }
 
@@ -614,10 +693,14 @@ function renderHeader(u) {
 /* ═══════════════════════════════════════════════════
    RENDER CARDS
 ═══════════════════════════════════════════════════ */
-function renderCards() {
+async function renderCards() {
   const u = getSession();
   const lvlClass = { debutant:'level-debutant', intermediaire:'level-intermediaire', avance:'level-avance' };
-  freeLessons = JSON.parse(localStorage.getItem(SK_FREE) || '["cpu"]');
+  // Charger les leçons gratuites depuis Supabase
+  try {
+    const row = await SB.query('free_lessons', { eq: { id: 1 }, single: true });
+    freeLessons = row?.lesson_ids || ['cpu'];
+  } catch(e) { freeLessons = ['cpu']; }
   ['lecons','depannage'].forEach(sec => {
     const meta = LESSONS_META.filter(l=>l.section===sec);
     document.getElementById('grid-'+sec).innerHTML = meta.map(l => {
@@ -682,10 +765,6 @@ async function checkPaymentReturn() {
         clearInterval(poll);
         // Mettre à jour la session
         u.premium = true; saveSession(u);
-        // Mettre à jour localStorage fallback
-        const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
-        const idx   = users.findIndex(x => x.email.toLowerCase() === u.email.toLowerCase());
-        if (idx > -1) { users[idx].premium = true; localStorage.setItem('hca_users', JSON.stringify(users)); }
         renderHeader(u); renderCards();
         toast('🎉 Paiement confirmé ! Accès Premium activé.', 'success');
       }
@@ -709,31 +788,31 @@ function openModPanel() {
 }
 function closeModPanel() { document.getElementById('mod-panel').style.display='none'; }
 
-function renderModMembers() {
-  const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
-  if (users.length === 0) {
+async function renderModMembers() {
+  document.getElementById('mod-members-tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:1.5rem;font-family:var(--mono);font-size:0.8rem;">Chargement…</td></tr>`;
+  const users = await SB.query('users', { order: 'created_at.desc' }) || [];
+  const filtered = users.filter(u => u.role !== 'admin');
+  if (filtered.length === 0) {
     document.getElementById('mod-members-tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem;font-family:var(--mono);font-size:0.8rem;">Aucun membre inscrit.</td></tr>`;
     return;
   }
-  const rows = users.filter(u=>u.role!=='admin').map((u,i)=>`
-    <tr>
+  const rows = filtered.map(u => {
+    const date = u.created_at ? new Date(u.created_at).toLocaleDateString('fr-FR') : '—';
+    return `<tr>
       <td style="color:var(--text)">${u.name}</td>
       <td class="td-email">${u.email}</td>
       <td class="${u.premium?'td-premium':'td-free'}">${u.premium?'⭐ Premium':'Gratuit'}</td>
-      <td style="font-family:var(--mono);font-size:0.7rem;">${u.createdAt||'—'}</td>
-      <td>${!u.premium?`<button class="btn-grant" onclick="modGrantPremium('${u.email}')">⭐ Offrir Premium</button>`:'<span style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);">✓ Déjà Premium</span>'}</td>
-    </tr>`).join('');
-  document.getElementById('mod-members-tbody').innerHTML = rows || `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem;font-family:var(--mono);font-size:0.8rem;">Aucun membre.</td></tr>`;
+      <td style="font-family:var(--mono);font-size:0.7rem;">${date}</td>
+      <td>${!u.premium?`<button class="btn-grant" onclick="modGrantPremium('${u.email}','${u.name}')">⭐ Offrir Premium</button>`:'<span style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);">✓ Déjà Premium</span>'}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('mod-members-tbody').innerHTML = rows;
 }
 
-function modGrantPremium(email) {
-  const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
-  const idx = users.findIndex(u => u.email === email);
-  if (idx === -1) return;
-  users[idx].premium = true;
-  localStorage.setItem('hca_users', JSON.stringify(users));
+async function modGrantPremium(email, name) {
+  await SB.update('users', { premium: true, premium_since: new Date().toISOString() }, { email });
   renderModMembers();
-  toast('⭐ Premium offert à ' + users[idx].name, 'success');
+  toast('⭐ Premium offert à ' + name, 'success');
 }
 
 function openPaywall()  { document.getElementById('paywall').classList.add('open'); }
@@ -752,8 +831,8 @@ function openAdmin() {
 }
 function closeAdmin() { document.getElementById('admin-panel').classList.remove('open'); }
 
-function renderAdminStats() {
-  const users   = JSON.parse(localStorage.getItem('hca_users') || '[]');
+async function renderAdminStats() {
+  const users = await SB.query('users') || [];
   const premium = users.filter(u=>u.premium).length;
   document.getElementById('admin-stats').innerHTML = `
     <div class="admin-stat-card"><div class="stat-val">${users.length}</div><div class="stat-lbl">Membres inscrits</div></div>
@@ -803,58 +882,66 @@ async function loadRevenue() {
     </table>`;
 }
 
-function renderMembersTable() {
-  const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
+async function renderMembersTable() {
+  document.getElementById('members-tbody').innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:1.5rem;font-family:var(--mono);font-size:0.8rem;">Chargement…</td></tr>`;
+  const users = await SB.query('users', { order: 'created_at.desc' });
   const adminRow = `<tr><td style="color:var(--text)">Kevin</td><td class="td-email">${ADMIN.email}</td><td class="td-role-admin">👑 Admin</td><td class="td-premium">∞ Illimité</td><td style="font-family:var(--mono);font-size:0.7rem;">Fondateur</td><td>—</td></tr>`;
-  if (users.length===0) { document.getElementById('members-tbody').innerHTML=adminRow+`<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;font-family:var(--mono);font-size:0.8rem;">Aucun membre inscrit.</td></tr>`; return; }
-  const rows = users.map((u,i)=>{
-    const roleLbl = u.role==='admin' ? '👑 Admin' : u.role==='moderateur' ? '🛡 Modérateur' : 'Membre';
+  if (!users || users.length===0) {
+    document.getElementById('members-tbody').innerHTML = adminRow + `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;font-family:var(--mono);font-size:0.8rem;">Aucun membre inscrit.</td></tr>`;
+    return;
+  }
+  const rows = users.map(u=>{
+    const roleLbl   = u.role==='admin' ? '👑 Admin' : u.role==='moderateur' ? '🛡 Modérateur' : 'Membre';
     const roleClass = u.role==='admin' ? 'td-role-admin' : u.role==='moderateur' ? 'td-role-admin' : 'td-role-member';
-    const modBtn = u.role!=='admin' ? (u.role==='moderateur'
-      ? `<button class="btn-grant" style="border-color:rgba(255,77,109,0.3);color:var(--accent3);" onclick="toggleMod(${i})">✕ Mod</button>`
-      : `<button class="btn-grant" style="color:var(--accent2);border-color:rgba(124,92,252,0.3);" onclick="toggleMod(${i})">🛡 Mod</button>`) : '';
-    return `<tr><td style="color:var(--text)">${u.name}</td><td class="td-email">${u.email}</td><td class="${roleClass}">${roleLbl}</td><td class="${u.premium?'td-premium':'td-free'}">${u.premium?'⭐ Premium':'Gratuit'}</td><td style="font-family:var(--mono);font-size:0.7rem;">${u.createdAt||'—'}</td><td>${!u.premium?`<button class="btn-grant" onclick="grantPremium(${i})">⭐ Offrir</button>`:''} ${modBtn}<button class="btn-del" onclick="deleteMember(${i})">✕</button></td></tr>`;
+    const date      = u.created_at ? new Date(u.created_at).toLocaleDateString('fr-FR') : '—';
+    const modBtn    = u.role!=='admin' ? (u.role==='moderateur'
+      ? `<button class="btn-grant" style="border-color:rgba(255,77,109,0.3);color:var(--accent3);" onclick="toggleMod('${u.email}','member')">✕ Mod</button>`
+      : `<button class="btn-grant" style="color:var(--accent2);border-color:rgba(124,92,252,0.3);" onclick="toggleMod('${u.email}','moderateur')">🛡 Mod</button>`) : '';
+    return `<tr><td style="color:var(--text)">${u.name}</td><td class="td-email">${u.email}</td><td class="${roleClass}">${roleLbl}</td><td class="${u.premium?'td-premium':'td-free'}">${u.premium?'⭐ Premium':'Gratuit'}</td><td style="font-family:var(--mono);font-size:0.7rem;">${date}</td><td>${!u.premium?`<button class="btn-grant" onclick="grantPremium('${u.email}')">⭐ Offrir</button>`:''} ${modBtn}<button class="btn-del" onclick="deleteMember('${u.email}','${u.name}')">✕</button></td></tr>`;
   }).join('');
   document.getElementById('members-tbody').innerHTML = adminRow + rows;
 }
 
-function grantPremium(i) {
-  const users=JSON.parse(localStorage.getItem('hca_users')||'[]');
-  users[i].premium=true; localStorage.setItem('hca_users',JSON.stringify(users));
-  // Sync backend
-  api('/api/admin/grant-premium','POST',{key:CONFIG.ADMIN_KEY, email:users[i].email, grant:true});
+async function grantPremium(email) {
+  await SB.update('users', { premium: true, premium_since: new Date().toISOString() }, { email });
   renderMembersTable(); renderAdminStats();
-  toast('⭐ Premium offert à '+users[i].name,'success');
-}
-function deleteMember(i) {
-  const users=JSON.parse(localStorage.getItem('hca_users')||'[]');
-  const name=users[i].name; users.splice(i,1);
-  localStorage.setItem('hca_users',JSON.stringify(users));
-  renderMembersTable(); renderAdminStats();
-  toast('🗑 '+name+' supprimé','error');
+  toast('⭐ Premium offert !', 'success');
 }
 
-function toggleMod(i) {
-  const users=JSON.parse(localStorage.getItem('hca_users')||'[]');
-  const wasMod = users[i].role === 'moderateur';
-  users[i].role = wasMod ? 'member' : 'moderateur';
-  localStorage.setItem('hca_users',JSON.stringify(users));
+async function deleteMember(email, name) {
+  if (!confirm('Supprimer ' + name + ' ?')) return;
+  await SB.delete('users', { email });
   renderMembersTable(); renderAdminStats();
-  toast(wasMod ? '🛡 Rôle modérateur retiré' : '🛡 '+users[i].name+' est maintenant modérateur', wasMod?'info':'success');
+  toast('🗑 ' + name + ' supprimé', 'error');
 }
 
-function renderAdminLessons() {
-  freeLessons = JSON.parse(localStorage.getItem(SK_FREE)||'["cpu"]');
+async function toggleMod(email, newRole) {
+  await SB.update('users', { role: newRole }, { email });
+  renderMembersTable(); renderAdminStats();
+  toast(newRole === 'moderateur' ? '🛡 Modérateur attribué !' : '🛡 Rôle retiré', 'info');
+}
+
+async function renderAdminLessons() {
+  const row = await SB.query('free_lessons', { eq: { id: 1 }, single: true });
+  freeLessons = row?.lesson_ids || ['cpu'];
   document.getElementById('admin-lessons-list').innerHTML = LESSONS_META.map(l=>{
     const isFree=freeLessons.includes(l.id);
     return `<div class="admin-lesson-row"><div><div class="admin-lesson-name">${l.icon} ${l.title}</div><div class="admin-lesson-num">Leçon ${l.num}</div></div><button class="toggle-access ${isFree?'toggle-free':'toggle-paid'}" onclick="toggleFree('${l.id}')">${isFree?'🆓 Gratuit':'🔒 Payant'}</button></div>`;
   }).join('');
 }
-function toggleFree(id) {
-  freeLessons=JSON.parse(localStorage.getItem(SK_FREE)||'["cpu"]');
-  if(freeLessons.includes(id)){if(freeLessons.length<=1){toast('⚠ Au moins une leçon gratuite requise.','error');return;}freeLessons=freeLessons.filter(x=>x!==id);toast('🔒 Leçon passée en payant','info');}
-  else{freeLessons.push(id);toast('🆓 Leçon passée en gratuit','success');}
-  localStorage.setItem(SK_FREE,JSON.stringify(freeLessons));
+
+async function toggleFree(id) {
+  const row = await SB.query('free_lessons', { eq: { id: 1 }, single: true });
+  freeLessons = row?.lesson_ids || ['cpu'];
+  if(freeLessons.includes(id)){
+    if(freeLessons.length<=1){toast('⚠ Au moins une leçon gratuite requise.','error');return;}
+    freeLessons=freeLessons.filter(x=>x!==id);
+    toast('🔒 Leçon passée en payant','info');
+  } else {
+    freeLessons.push(id);
+    toast('🆓 Leçon passée en gratuit','success');
+  }
+  await SB.update('free_lessons', { lesson_ids: freeLessons }, { id: 1 });
   renderAdminLessons(); renderAdminStats(); renderCards();
 }
 
@@ -942,12 +1029,17 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLesson();close
 /* ═══════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+  // Charger les leçons gratuites au démarrage
+  try {
+    const row = await SB.query('free_lessons', { eq: { id: 1 }, single: true });
+    freeLessons = row?.lesson_ids || ['cpu'];
+  } catch(e) { freeLessons = ['cpu']; }
+
   const session = getSession();
   if (session) { enterSite(); checkPaymentReturn(); }
   else {
     showAuth();
-    // Cocher "Se souvenir de moi" si une session persistante existe
     if (localStorage.getItem('hca_session')) {
       document.getElementById('remember-me').checked = true;
     }
