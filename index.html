@@ -28,16 +28,12 @@
       background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
       pointer-events:none; z-index:9999; opacity:0.3;
     }
-
-    /* ─── HEADER ─── */
     header { padding:2rem 3rem; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(10,10,15,0.92); backdrop-filter:blur(12px); z-index:100; }
     .logo { font-family:var(--mono); font-size:1.1rem; color:var(--accent); letter-spacing:-0.02em; }
     .logo span { color:var(--muted); }
     nav { display:flex; gap:2rem; }
     nav a { font-family:var(--mono); font-size:0.8rem; color:var(--muted); text-decoration:none; letter-spacing:0.05em; text-transform:uppercase; transition:color 0.2s; }
     nav a:hover { color:var(--accent); }
-
-    /* ─── HERO ─── */
     .hero { padding:6rem 3rem 4rem; position:relative; overflow:hidden; }
     .hero-grid { position:absolute; inset:0; background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px); background-size:60px 60px; opacity:0.3; mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 30%,transparent 100%); }
     .hero-glow { position:absolute; width:600px; height:600px; border-radius:50%; background:radial-gradient(circle,rgba(0,240,160,0.08) 0%,transparent 70%); top:-100px; left:-100px; pointer-events:none; }
@@ -51,15 +47,11 @@
     .stat-item { text-align:left; }
     .stat-num { font-family:var(--mono); font-size:1.8rem; font-weight:700; color:var(--accent); }
     .stat-label { font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
-
-    /* ─── LAYOUT ─── */
     .container { max-width:1300px; margin:0 auto; padding:0 3rem; }
     .section-header { display:flex; align-items:baseline; gap:1rem; margin-bottom:2.5rem; }
     .section-num { font-family:var(--mono); font-size:0.75rem; color:var(--accent2); border:1px solid var(--accent2); padding:0.2rem 0.5rem; border-radius:2px; }
     .section-title { font-size:1.8rem; font-weight:800; color:var(--text); }
     .section-line { flex:1; height:1px; background:linear-gradient(90deg,var(--border),transparent); }
-
-    /* ─── CARDS ─── */
     section.lessons { padding:4rem 0; }
     .lessons-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:1.5rem; }
     .lesson-card { background:var(--card); border:1px solid var(--border); border-radius:4px; overflow:hidden; cursor:pointer; transition:border-color 0.25s,transform 0.2s,box-shadow 0.25s; text-decoration:none; display:block; animation:fadeIn 0.5s ease both; }
@@ -77,8 +69,6 @@
     .card-footer { border-top:1px solid var(--border); padding:0.9rem 1.5rem; display:flex; align-items:center; justify-content:space-between; font-family:var(--mono); font-size:0.72rem; color:var(--muted); }
     .card-footer .arrow { color:var(--accent); transition:transform 0.2s; }
     .lesson-card:hover .arrow { transform:translateX(4px); }
-
-    /* ─── MODAL ─── */
     .overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.85); backdrop-filter:blur(8px); z-index:200; align-items:center; justify-content:center; padding:2rem; }
     .overlay.open { display:flex; }
     .modal { background:var(--surface); border:1px solid var(--border); border-radius:6px; width:100%; max-width:820px; max-height:90vh; overflow-y:auto; animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
@@ -107,8 +97,6 @@
     .quiz-btn.wrong { border-color:var(--accent3); color:var(--accent3); background:rgba(255,77,109,0.05); }
     .quiz-feedback { margin-top:0.75rem; font-size:0.82rem; font-family:var(--mono); display:none; }
     .quiz-feedback.show { display:block; }
-
-    /* ─── AUTH ─── */
     #auth-screen { position:fixed; inset:0; z-index:5000; background:radial-gradient(ellipse 90% 70% at 50% 30%,rgba(0,240,160,0.06) 0%,transparent 60%),var(--bg); display:flex; align-items:center; justify-content:center; padding:1.5rem; }
     #auth-screen.hidden { display:none; }
     .auth-card { width:100%; max-width:430px; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
@@ -134,8 +122,6 @@
     .auth-note { font-size:0.75rem; color:var(--muted); text-align:center; font-family:var(--mono); margin-top:0.25rem; }
     .auth-note span { color:var(--accent2); cursor:pointer; }
     .auth-note span:hover { text-decoration:underline; }
-
-    /* ─── HEADER USER ─── */
     .header-user { display:flex; align-items:center; gap:1rem; }
     .user-badge { display:flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.75rem; color:var(--muted); }
     .user-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; font-family:var(--mono); }
@@ -150,14 +136,10 @@
     .btn-logout:hover { border-color:var(--accent3); color:var(--accent3); }
     .btn-admin-panel { font-family:var(--mono); font-size:0.7rem; color:var(--gold); background:rgba(245,197,24,0.08); border:1px solid rgba(245,197,24,0.3); padding:0.3rem 0.7rem; border-radius:4px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
     .btn-admin-panel:hover { background:rgba(245,197,24,0.15); }
-
-    /* ─── LOCK BADGES ─── */
     .lesson-card.locked { cursor:default; }
     .lesson-card.locked:hover { border-color:rgba(124,92,252,0.4); transform:none; box-shadow:none; }
     .lock-badge { display:inline-flex; align-items:center; gap:0.35rem; font-family:var(--mono); font-size:0.65rem; color:var(--accent2); background:rgba(124,92,252,0.1); border:1px solid rgba(124,92,252,0.25); padding:0.2rem 0.55rem; border-radius:3px; }
     .free-badge { display:inline-flex; align-items:center; gap:0.35rem; font-family:var(--mono); font-size:0.65rem; color:var(--accent); background:rgba(0,240,160,0.08); border:1px solid rgba(0,240,160,0.25); padding:0.2rem 0.55rem; border-radius:3px; }
-
-    /* ─── PAYWALL ─── */
     .paywall-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.88); backdrop-filter:blur(10px); z-index:300; align-items:center; justify-content:center; padding:2rem; }
     .paywall-overlay.open { display:flex; }
     .paywall-box { background:var(--surface); border:1px solid var(--border); border-radius:10px; width:100%; max-width:480px; padding:2.5rem; text-align:center; animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
@@ -171,13 +153,9 @@
     .paywall-perks li::before { content:'✓'; position:absolute; left:0; color:var(--accent); }
     .paywall-cta { width:100%; padding:0.9rem; background:var(--accent); color:#000; border:none; border-radius:6px; font-family:var(--sans); font-size:1rem; font-weight:700; cursor:pointer; margin-bottom:0.75rem; transition:opacity 0.2s,transform 0.15s; display:flex; align-items:center; justify-content:center; gap:0.5rem; }
     .paywall-cta:hover { opacity:0.85; transform:translateY(-1px); }
-    .paywall-cta:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-    .paywall-cta .spinner { width:16px; height:16px; border:2px solid rgba(0,0,0,0.3); border-top-color:#000; border-radius:50%; animation:spin 0.8s linear infinite; }
     .paywall-cancel { background:none; border:1px solid var(--border); color:var(--muted); width:100%; padding:0.7rem; border-radius:6px; cursor:pointer; font-family:var(--mono); font-size:0.8rem; transition:all 0.2s; }
     .paywall-cancel:hover { border-color:var(--accent3); color:var(--accent3); }
     .stripe-badge { display:flex; align-items:center; justify-content:center; gap:0.4rem; margin-top:1rem; font-family:var(--mono); font-size:0.65rem; color:var(--muted); opacity:0.6; }
-
-    /* ─── ADMIN PANEL ─── */
     #admin-panel { position:fixed; inset:0; z-index:400; background:var(--bg); overflow-y:auto; display:none; }
     #admin-panel.open { display:block; }
     .admin-header { padding:1.5rem 3rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:rgba(10,10,15,0.95); position:sticky; top:0; z-index:10; backdrop-filter:blur(12px); }
@@ -188,7 +166,6 @@
     .admin-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:3rem; }
     .admin-stat-card { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:1.5rem; }
     .admin-stat-card .stat-val { font-family:var(--mono); font-size:2rem; font-weight:700; color:var(--accent); }
-    .admin-stat-card .stat-val.gold { color:var(--gold); }
     .admin-stat-card .stat-lbl { font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.3rem; }
     .admin-section-title { font-family:var(--mono); font-size:0.75rem; color:var(--accent2); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); }
     .members-table { width:100%; border-collapse:collapse; }
@@ -213,30 +190,18 @@
     .toggle-paid { background:rgba(124,92,252,0.08); color:var(--accent2); border-color:rgba(124,92,252,0.3); }
     .admin-info-box { background:rgba(245,197,24,0.05); border:1px solid rgba(245,197,24,0.2); border-radius:6px; padding:1.2rem 1.5rem; margin-bottom:2rem; font-family:var(--mono); font-size:0.78rem; color:var(--muted); line-height:1.8; }
     .admin-info-box .hi { color:var(--gold); }
-
-    /* ─── STRIPE DASHBOARD BTN ─── */
     .btn-stripe-dashboard { display:inline-flex; align-items:center; gap:0.6rem; font-family:var(--mono); font-size:0.8rem; color:#fff; background:linear-gradient(135deg,#635bff,#7c71ff); border:none; padding:0.6rem 1.2rem; border-radius:6px; cursor:pointer; text-decoration:none; font-weight:700; transition:opacity 0.2s,transform 0.15s; letter-spacing:0.03em; }
     .btn-stripe-dashboard:hover { opacity:0.88; transform:translateY(-1px); }
-
-    
-
-    /* ─── TOAST ─── */
     #toast { position:fixed; bottom:2rem; right:2rem; z-index:9000; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.9rem 1.4rem; font-family:var(--mono); font-size:0.8rem; color:var(--text); box-shadow:0 8px 32px rgba(0,0,0,0.4); transform:translateY(100px); opacity:0; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); max-width:300px; }
     #toast.show { transform:translateY(0); opacity:1; }
     #toast.success { border-color:rgba(0,240,160,0.4); color:var(--accent); }
     #toast.error { border-color:rgba(255,77,109,0.4); color:var(--accent3); }
     #toast.info { border-color:rgba(124,92,252,0.4); color:var(--accent2); }
-
-    /* ─── LOADING OVERLAY ─── */
     .loading-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.7); backdrop-filter:blur(4px); z-index:9000; align-items:center; justify-content:center; flex-direction:column; gap:1rem; }
     .loading-overlay.show { display:flex; }
     .loading-spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
     .loading-text { font-family:var(--mono); font-size:0.85rem; color:var(--muted); }
-
-    /* ─── FOOTER ─── */
     footer { margin-top:6rem; border-top:1px solid var(--border); padding:2rem 3rem; display:flex; align-items:center; justify-content:space-between; font-family:var(--mono); font-size:0.75rem; color:var(--muted); }
-
-    /* ─── ANIMATIONS ─── */
     @keyframes fadeIn { from{opacity:0}to{opacity:1} }
     @keyframes slideUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
     @keyframes popIn { from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)} }
@@ -248,16 +213,13 @@
 </head>
 <body>
 
-<!-- ═══════════ LOADING ═══════════ -->
 <div class="loading-overlay" id="loading-overlay">
   <div class="loading-spinner"></div>
   <div class="loading-text">Redirection vers Stripe…</div>
 </div>
 
-<!-- ═══════════ TOAST ═══════════ -->
 <div id="toast"></div>
 
-<!-- ═══════════ AUTH ═══════════ -->
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-top">
@@ -289,7 +251,6 @@
   </div>
 </div>
 
-<!-- ═══════════ ADMIN ═══════════ -->
 <div id="admin-panel">
   <div class="admin-header">
     <div class="admin-title"><span>👑</span><span style="color:var(--gold)">Panneau Administrateur</span><span style="color:var(--muted);font-size:0.75rem;font-family:var(--mono)">HardCore Academy</span></div>
@@ -297,11 +258,7 @@
   </div>
   <div class="admin-body">
     <div class="admin-info-box"><span class="hi">👑 Connecté en tant qu'Administrateur</span><br>Accès complet : leçons, membres, revenus Stripe.</div>
-
-    <!-- Stats globales -->
     <div class="admin-grid" id="admin-stats"></div>
-
-    <!-- ═══ STRIPE DASHBOARD ═══ -->
     <div style="margin-bottom:2.5rem;">
       <div class="admin-section-title">💳 Stripe</div>
       <a class="btn-stripe-dashboard" href="https://dashboard.stripe.com/acct_1THYuZFdWWhEDe7b/test/dashboard" target="_blank" rel="noopener">
@@ -309,30 +266,10 @@
         Dashboard Stripe →
       </a>
     </div>
-    <div style="display:none" id="revenue-panel">
-      <div class="revenue-header">
-        <div class="revenue-title">💰 Revenus &amp; Paiements Stripe</div>
-        <div style="display:flex;gap:0.75rem;align-items:center;">
-          <a class="stripe-link-btn" href="https://dashboard.stripe.com" target="_blank" rel="noopener">🔗 Dashboard Stripe</a>
-          <button class="btn-refresh" onclick="loadRevenue()">↻ Actualiser</button>
-        </div>
-      </div>
-      <div class="revenue-stats" id="revenue-stats">
-        <div class="rev-stat"><div class="val" id="rev-total">—</div><div class="lbl">Revenus totaux</div></div>
-        <div class="rev-stat"><div class="val" id="rev-count">—</div><div class="lbl">Transactions</div></div>
-        <div class="rev-stat"><div class="val" id="rev-today">—</div><div class="lbl">Aujourd'hui</div></div>
-        <div class="rev-stat"><div class="val" id="rev-month">—</div><div class="lbl">Ce mois</div></div>
-      </div>
-      <div id="payments-list"></div>
-    </div>
-
-    <!-- Membres -->
     <div style="margin-bottom:2.5rem;">
       <div class="admin-section-title">👥 Gestion des membres</div>
       <div style="overflow-x:auto;"><table class="members-table" id="members-table"><thead><tr><th>Prénom</th><th>E-mail</th><th>Rôle</th><th>Accès</th><th>Inscrit le</th><th>Actions</th></tr></thead><tbody id="members-tbody"></tbody></table></div>
     </div>
-
-    <!-- Leçons -->
     <div>
       <div class="admin-section-title">📚 Gestion des leçons</div>
       <div class="admin-lessons-grid" id="admin-lessons-list"></div>
@@ -340,7 +277,6 @@
   </div>
 </div>
 
-<!-- ═══════════ MOD PANEL ═══════════ -->
 <div id="mod-panel" style="display:none;position:fixed;inset:0;z-index:400;background:var(--bg);overflow-y:auto;">
   <div class="admin-header">
     <div class="admin-title"><span>🛡</span><span style="color:var(--accent2)">Panneau Modérateur</span><span style="color:var(--muted);font-size:0.75rem;font-family:var(--mono)">HardCore Academy</span></div>
@@ -355,7 +291,6 @@
   </div>
 </div>
 
-<!-- ═══════════ PAYWALL ═══════════ -->
 <div class="paywall-overlay" id="paywall">
   <div class="paywall-box">
     <div class="paywall-icon">🔐</div>
@@ -369,18 +304,15 @@
       <li>Section Diagnostic & Dépannage complète</li>
       <li>Mises à jour incluses</li>
     </ul>
-<a href="https://buy.stripe.com/test_5kQ9AT6OjeYx48P28Qasg00">
-  <button class="paywall-cta">
-    💳 Payer 2,99 € par carte →
-  </button>
-</a>
+    <a href="https://buy.stripe.com/test_5kQ9AT6OjeYx48P28Qasg00">
+      <button class="paywall-cta">💳 Payer 2,99 € par carte →</button>
+    </a>
     <button class="paywall-cancel" onclick="closePaywall()">Non merci, continuer sans premium</button>
     <div class="stripe-badge">🔒 Paiement sécurisé par <strong style="color:var(--accent2)">Stripe</strong> · Données jamais stockées</div>
     <div style="margin-top:0.9rem;font-family:var(--mono);font-size:0.72rem;color:var(--muted);line-height:1.7;text-align:center;border-top:1px solid var(--border);padding-top:0.75rem;">⚠ Utilise bien la <strong style="color:var(--text)">même adresse e-mail</strong> que ton compte · le déblocage peut prendre <strong style="color:var(--text)">jusqu'à 24h</strong></div>
   </div>
 </div>
 
-<!-- ═══════════ MAIN SITE ═══════════ -->
 <header id="main-header" style="display:none;">
   <div class="logo">HARD<span>//</span>CORE <span>ACADEMY</span></div>
   <nav><a href="#lecons">Composants</a><a href="#depannage">Dépannage</a></nav>
@@ -419,7 +351,6 @@
   <span style="display:flex;align-items:center;gap:0.5rem;">🔒 Paiements sécurisés par Stripe</span>
 </footer>
 
-<!-- ─── MODAL ─── -->
 <div class="overlay" id="overlay" onclick="closeOnOverlay(event)">
   <div class="modal" id="modal">
     <div class="modal-header"><h2 id="modal-title">Titre</h2><button class="modal-close" onclick="closeLesson()">✕</button></div>
@@ -428,19 +359,13 @@
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════
-   ⚙ CONFIG — MODIFIER CES VALEURS
-═══════════════════════════════════════════════════ */
 const CONFIG = {
   API_URL: 'http://localhost:3000',
   ADMIN_KEY: 'change_moi_avec_une_cle_tres_longue_et_aleatoire_123456',
-
-  // ⚙ SUPABASE — colle tes clés ici
-  SUPABASE_URL: 'COLLE_TON_PROJECT_URL_ICI',
-  SUPABASE_KEY: 'COLLE_TA_ANON_KEY_ICI'
+  SUPABASE_URL: 'https://okspoziagscewmtpdmcg.supabase.co',
+  SUPABASE_KEY: 'sb_publishable_RKFql2kOZzTR9ZVBUT_c1A_runCTkO8'
 };
 
-// ─── Client Supabase (sans librairie, appels REST directs) ───
 const SB = {
   url: CONFIG.SUPABASE_URL,
   key: CONFIG.SUPABASE_KEY,
@@ -452,13 +377,11 @@ const SB = {
     if (options.eq)      Object.entries(options.eq).forEach(([k,v]) => params.push(`${k}=eq.${encodeURIComponent(v)}`));
     if (options.order)   params.push(`order=${options.order}`);
     if (params.length)   url += '?' + params.join('&');
-
     const res = await fetch(url, {
       headers: {
         'apikey': this.key,
         'Authorization': 'Bearer ' + this.key,
-        'Content-Type': 'application/json',
-        'Prefer': options.single ? 'return=representation' : 'return=representation'
+        'Content-Type': 'application/json'
       }
     });
     const data = await res.json();
@@ -511,9 +434,6 @@ const SB = {
   }
 };
 
-/* ═══════════════════════════════════════════════════
-   ADMIN ACCOUNT (local — vérification frontend)
-═══════════════════════════════════════════════════ */
 const ADMIN = {
   email: 'kevinzeline942@gmail.com',
   pwd:   atob('S2V2aW4wNjAyMDk='),
@@ -521,12 +441,9 @@ const ADMIN = {
   role:  'admin'
 };
 
-/* ═══════════════════════════════════════════════════
-   DATA
-═══════════════════════════════════════════════════ */
 const SK_SESSION = 'hca_session';
 const SK_FREE    = 'hca_free_lessons';
-let freeLessons  = ['cpu']; // chargé depuis Supabase au démarrage
+let freeLessons  = ['cpu'];
 
 const LESSONS_META = [
   { id:'cpu',             num:'01', icon:'🧠', color:'rgba(0,240,160,0.08)',   title:'Le Processeur (CPU)',           desc:'Architecture, cycles d\'horloge, cœurs, threads.',           level:'debutant',      time:'~25 min', section:'lecons'    },
@@ -540,9 +457,6 @@ const LESSONS_META = [
   { id:'pannes_courantes',num:'09', icon:'⚡', color:'rgba(255,77,109,0.08)', title:'Pannes Courantes & Solutions',  desc:'PC muet, écran noir, BSOD, surchauffe, GPU.',                level:'avance',        time:'~45 min', section:'depannage' },
 ];
 
-/* ═══════════════════════════════════════════════════
-   SESSION
-═══════════════════════════════════════════════════ */
 function getSession()  { return JSON.parse(sessionStorage.getItem(SK_SESSION) || localStorage.getItem(SK_SESSION) || 'null'); }
 function saveSession(u, remember){ sessionStorage.setItem(SK_SESSION, JSON.stringify(u)); if(remember) localStorage.setItem(SK_SESSION, JSON.stringify(u)); }
 function clearSession(){ sessionStorage.removeItem(SK_SESSION); localStorage.removeItem(SK_SESSION); }
@@ -550,9 +464,6 @@ function isAdmin(u)    { return u && u.role === 'admin'; }
 function isMod(u)      { return u && (u.role === 'moderateur' || u.role === 'admin'); }
 function isPremium(u)  { return u && (u.role === 'admin' || u.premium); }
 
-/* ═══════════════════════════════════════════════════
-   API HELPERS
-═══════════════════════════════════════════════════ */
 async function api(path, method='GET', body=null) {
   const opts = { method, headers:{ 'Content-Type':'application/json' } };
   if (body) opts.body = JSON.stringify(body);
@@ -560,14 +471,11 @@ async function api(path, method='GET', body=null) {
     const r = await fetch(CONFIG.API_URL + path, opts);
     return await r.json();
   } catch(e) {
-    console.warn('API offline, using localStorage fallback');
+    console.warn('API offline');
     return null;
   }
 }
 
-/* ═══════════════════════════════════════════════════
-   AUTH
-═══════════════════════════════════════════════════ */
 function switchTab(tab) {
   document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', tab==='login'?i===0:i===1));
   document.getElementById('form-login').classList.toggle('active', tab==='login');
@@ -584,13 +492,11 @@ async function doLogin(e) {
   err.classList.remove('show');
   btn.disabled = true; btn.textContent = 'Connexion…';
 
-  // Admin check (local)
   if (email === ADMIN.email.toLowerCase() && pwd === ADMIN.pwd) {
     saveSession({ name:ADMIN.name, email:ADMIN.email, role:'admin', premium:true }, remember);
     enterSite(); return;
   }
 
-  // Supabase login
   try {
     const user = await SB.query('users', { eq: { email, pwd }, single: true });
     if (user && user.id) {
@@ -625,7 +531,6 @@ async function doRegister(e) {
   }
 
   try {
-    // Vérifier si email déjà utilisé
     const existing = await SB.query('users', { eq: { email }, single: true });
     if (existing && existing.id && existing.pwd !== '') {
       err.textContent='❌ Un compte existe déjà avec cet email.'; err.classList.add('show');
@@ -634,7 +539,6 @@ async function doRegister(e) {
 
     let user;
     if (existing && existing.id) {
-      // Compte pré-créé par paiement Stripe avant inscription
       user = await SB.update('users', { name, pwd }, { email });
     } else {
       user = await SB.insert('users', { name, email, pwd, role: 'member', premium: false });
@@ -651,9 +555,6 @@ async function doRegister(e) {
 
 function logout() { clearSession(); showAuth(); toast('Au revoir 👋','info'); }
 
-/* ═══════════════════════════════════════════════════
-   SITE DISPLAY
-═══════════════════════════════════════════════════ */
 function showAuth() {
   document.getElementById('auth-screen').style.display='flex';
   ['main-header','main-hero','main-content'].forEach(id=>document.getElementById(id).style.display='none');
@@ -671,9 +572,6 @@ function enterSite() {
   toast('Bienvenue ' + u.name + ' 👋','success');
 }
 
-/* ═══════════════════════════════════════════════════
-   HEADER
-═══════════════════════════════════════════════════ */
 function renderHeader(u) {
   const initials = u.name.slice(0,2).toUpperCase();
   const isAdm    = isAdmin(u);
@@ -690,13 +588,9 @@ function renderHeader(u) {
   document.getElementById('header-user').innerHTML = html;
 }
 
-/* ═══════════════════════════════════════════════════
-   RENDER CARDS
-═══════════════════════════════════════════════════ */
 async function renderCards() {
   const u = getSession();
   const lvlClass = { debutant:'level-debutant', intermediaire:'level-intermediaire', avance:'level-avance' };
-  // Charger les leçons gratuites depuis Supabase
   try {
     const row = await SB.query('free_lessons', { eq: { id: 1 }, single: true });
     freeLessons = row?.lesson_ids || ['cpu'];
@@ -716,70 +610,8 @@ async function renderCards() {
   });
 }
 
-/* ═══════════════════════════════════════════════════
-   STRIPE CHECKOUT
-═══════════════════════════════════════════════════ */
-async function startStripeCheckout() {
-  const u = getSession();
-  if (!u) return;
-  const btn = document.getElementById('stripe-pay-btn');
-  btn.disabled = true;
-  btn.innerHTML = `<div class="spinner"></div> Préparation du paiement…`;
-  document.getElementById('loading-overlay').classList.add('show');
-
-  const res = await api('/api/create-checkout', 'POST', { email: u.email, userName: u.name });
-
-  if (res && res.url) {
-    // Sauvegarder l'email pour vérifier après retour
-    sessionStorage.setItem('hca_pending_premium', u.email);
-    window.location.href = res.url; // Redirection vers Stripe
-  } else {
-    document.getElementById('loading-overlay').classList.remove('show');
-    btn.disabled = false;
-    btn.innerHTML = `<span id="pay-btn-text">💳 Payer 2,99 € par carte →</span>`;
-    toast('❌ Erreur de connexion au serveur. Réessaie.', 'error');
-  }
-}
-
-// ─── Vérifier le retour depuis Stripe ─────────────────────
-async function checkPaymentReturn() {
-  const params  = new URLSearchParams(window.location.search);
-  const status  = params.get('payment');
-  const session = params.get('session_id');
-
-  if (status === 'success' && session) {
-    // Nettoyer l'URL
-    window.history.replaceState({}, '', window.location.pathname);
-
-    const u = getSession();
-    if (!u) return;
-
-    toast('⏳ Vérification du paiement…', 'info');
-
-    // Polling : vérifier que le webhook a bien activé le premium
-    let attempts = 0;
-    const poll = setInterval(async () => {
-      attempts++;
-      const res = await api(`/api/check-premium/${encodeURIComponent(u.email)}`);
-      if (res?.premium) {
-        clearInterval(poll);
-        // Mettre à jour la session
-        u.premium = true; saveSession(u);
-        renderHeader(u); renderCards();
-        toast('🎉 Paiement confirmé ! Accès Premium activé.', 'success');
-      }
-      if (attempts >= 10) {
-        clearInterval(poll);
-        toast('⚠ Paiement reçu — activation en cours (peut prendre quelques minutes).', 'info');
-      }
-    }, 2000); // toutes les 2 secondes
-  }
-
-  if (status === 'cancelled') {
-    window.history.replaceState({}, '', window.location.pathname);
-    toast('Paiement annulé.', 'info');
-  }
-}
+function openPaywall()  { document.getElementById('paywall').classList.add('open'); }
+function closePaywall() { document.getElementById('paywall').classList.remove('open'); }
 
 function openModPanel() {
   if (!isMod(getSession())) return;
@@ -796,7 +628,7 @@ async function renderModMembers() {
     document.getElementById('mod-members-tbody').innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem;font-family:var(--mono);font-size:0.8rem;">Aucun membre inscrit.</td></tr>`;
     return;
   }
-  const rows = filtered.map(u => {
+  document.getElementById('mod-members-tbody').innerHTML = filtered.map(u => {
     const date = u.created_at ? new Date(u.created_at).toLocaleDateString('fr-FR') : '—';
     return `<tr>
       <td style="color:var(--text)">${u.name}</td>
@@ -806,7 +638,6 @@ async function renderModMembers() {
       <td>${!u.premium?`<button class="btn-grant" onclick="modGrantPremium('${u.email}','${u.name}')">⭐ Offrir Premium</button>`:'<span style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);">✓ Déjà Premium</span>'}</td>
     </tr>`;
   }).join('');
-  document.getElementById('mod-members-tbody').innerHTML = rows;
 }
 
 async function modGrantPremium(email, name) {
@@ -815,19 +646,12 @@ async function modGrantPremium(email, name) {
   toast('⭐ Premium offert à ' + name, 'success');
 }
 
-function openPaywall()  { document.getElementById('paywall').classList.add('open'); }
-function closePaywall() { document.getElementById('paywall').classList.remove('open'); }
-
-/* ═══════════════════════════════════════════════════
-   ADMIN PANEL
-═══════════════════════════════════════════════════ */
 function openAdmin() {
   if (!isAdmin(getSession())) return;
   document.getElementById('admin-panel').classList.add('open');
   renderAdminStats();
   renderMembersTable();
   renderAdminLessons();
-  loadRevenue();
 }
 function closeAdmin() { document.getElementById('admin-panel').classList.remove('open'); }
 
@@ -839,47 +663,6 @@ async function renderAdminStats() {
     <div class="admin-stat-card"><div class="stat-val">${premium}</div><div class="stat-lbl">Comptes Premium</div></div>
     <div class="admin-stat-card"><div class="stat-val">${LESSONS_META.length}</div><div class="stat-lbl">Leçons totales</div></div>
     <div class="admin-stat-card"><div class="stat-val">${freeLessons.length}</div><div class="stat-lbl">Leçons gratuites</div></div>`;
-}
-
-/* ─── Charger les revenus depuis le backend ─────────────── */
-async function loadRevenue() {
-  const res = await api(`/api/admin/stats?key=${encodeURIComponent(CONFIG.ADMIN_KEY)}`);
-  if (!res) {
-    document.getElementById('payments-list').innerHTML = `<div class="no-payments">⚠ Backend non connecté — configure CONFIG.API_URL et ADMIN_KEY<br><small style="opacity:0.6">Voir le guide d'installation ci-dessous</small></div>`;
-    return;
-  }
-
-  document.getElementById('rev-total').textContent = res.revenue + ' €';
-  document.getElementById('rev-count').textContent  = res.payments.length;
-
-  // Paiements aujourd'hui
-  const today    = new Date().toDateString();
-  const todayAmt = res.payments.filter(p => new Date(p.date).toDateString()===today).reduce((s,p)=>s+p.amount,0);
-  document.getElementById('rev-today').textContent = todayAmt.toFixed(2) + ' €';
-
-  // Paiements ce mois
-  const now      = new Date();
-  const monthAmt = res.payments.filter(p => { const d=new Date(p.date); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); }).reduce((s,p)=>s+p.amount,0);
-  document.getElementById('rev-month').textContent = monthAmt.toFixed(2) + ' €';
-
-  if (res.payments.length === 0) {
-    document.getElementById('payments-list').innerHTML = `<div class="no-payments">Aucun paiement enregistré pour l'instant.</div>`;
-    return;
-  }
-
-  document.getElementById('payments-list').innerHTML = `
-    <table class="payments-table">
-      <thead><tr><th>Date</th><th>Email</th><th>Montant</th><th>Statut</th><th>Session Stripe</th></tr></thead>
-      <tbody>
-        ${res.payments.map(p=>`<tr>
-          <td>${new Date(p.date).toLocaleString('fr-FR')}</td>
-          <td>${p.email}</td>
-          <td class="pay-amount">${p.amount} ${p.currency}</td>
-          <td class="pay-status-paid">✓ ${p.status}</td>
-          <td style="font-size:0.7rem;opacity:0.5">${p.id.substring(0,20)}…</td>
-        </tr>`).join('')}
-      </tbody>
-    </table>`;
 }
 
 async function renderMembersTable() {
@@ -945,15 +728,9 @@ async function toggleFree(id) {
   renderAdminLessons(); renderAdminStats(); renderCards();
 }
 
-/* ═══════════════════════════════════════════════════
-   TOAST
-═══════════════════════════════════════════════════ */
 let toastTimer;
 function toast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='show '+type;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.className='';},3500);}
 
-/* ═══════════════════════════════════════════════════
-   LESSONS CONTENT
-═══════════════════════════════════════════════════ */
 const lessons = {
   cpu:{title:"🧠 Le Processeur (CPU)",html:`<h3>Qu'est-ce qu'un CPU ?</h3><p>Le CPU (<strong style="color:var(--text)">Central Processing Unit</strong>) est le cerveau de l'ordinateur. Il exécute les instructions des programmes, effectue des calculs arithmétiques et logiques, et coordonne tous les autres composants.</p><h3>Architecture de base</h3><ul><li><strong style="color:var(--text)">ALU</strong> — effectue les additions, soustractions, comparaisons</li><li><strong style="color:var(--text)">CU</strong> — décode les instructions et orchestre l'exécution</li><li><strong style="color:var(--text)">Registres</strong> — mémoire ultra-rapide dans le CPU</li><li><strong style="color:var(--text)">Cache L1/L2/L3</strong> — mémoire tampon hiérarchique</li></ul><div class="schema-box"><span class="dim">┌──────────────────────────────────────┐</span>
 <span class="dim">│</span>              <span class="hi">CPU DIE</span>                    <span class="dim">│</span>
@@ -1017,27 +794,20 @@ const lessons = {
 <span class="dim">□</span> Connecteur bouton power sur F_PANEL ?</div><h3>Écran noir</h3><ul><li>Vérifier le câble vidéo et le bon port</li><li>Tester chaque barrette RAM seule</li><li>Réinitialiser le BIOS : retirer la pile CR2032</li></ul><h3>Surchauffe & Throttling</h3><ul><li>Nettoyer les filtres à poussière</li><li>Changer la pâte thermique</li><li>Améliorer le flux d'air</li></ul><h3>HDD qui clique</h3><p style="color:var(--accent3);font-weight:700;">⚠ Panne mécanique imminente — sauvegarder EN URGENCE !</p><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>Ton HDD fait un bruit de clic. Première action ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. Défragmenter</button><button class="quiz-btn" onclick="answer(this,false)">B. Lancer un chkdsk</button><button class="quiz-btn" onclick="answer(this,true)">C. Sauvegarder immédiatement</button><button class="quiz-btn" onclick="answer(this,false)">D. Mettre à jour les drivers</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`}
 };
 
-/* ═══════════════════════════════════════════════════
-   MODAL
-═══════════════════════════════════════════════════ */
 function openLesson(id){const l=lessons[id];document.getElementById('modal-title').textContent=l.title;document.getElementById('modal-body').innerHTML=l.html;document.getElementById('overlay').classList.add('open');document.getElementById('modal').scrollTop=0;}
 function closeLesson(){document.getElementById('overlay').classList.remove('open');}
 function closeOnOverlay(e){if(e.target===document.getElementById('overlay'))closeLesson();}
 function answer(btn,correct){const container=btn.closest('.quiz-options');const feedback=btn.closest('.quiz-box').querySelector('.quiz-feedback');container.querySelectorAll('.quiz-btn').forEach(b=>b.disabled=true);if(correct){btn.classList.add('correct');feedback.style.color='var(--accent)';feedback.textContent='✓ Bonne réponse !';}else{btn.classList.add('wrong');feedback.style.color='var(--accent3)';feedback.textContent='✗ Pas tout à fait — relis la leçon.';}feedback.classList.add('show');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLesson();closeAdmin();closePaywall();}});
 
-/* ═══════════════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', async () => {
-  // Charger les leçons gratuites au démarrage
   try {
     const row = await SB.query('free_lessons', { eq: { id: 1 }, single: true });
     freeLessons = row?.lesson_ids || ['cpu'];
   } catch(e) { freeLessons = ['cpu']; }
 
   const session = getSession();
-  if (session) { enterSite(); checkPaymentReturn(); }
+  if (session) { enterSite(); }
   else {
     showAuth();
     if (localStorage.getItem('hca_session')) {
@@ -1045,7 +815,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   }
   const params = new URLSearchParams(window.location.search);
-  if (params.get('payment') === 'success') checkPaymentReturn();
+  if (params.get('payment') === 'cancelled') {
+    window.history.replaceState({}, '', window.location.pathname);
+    toast('Paiement annulé.', 'info');
+  }
 });
 </script>
 </body>
