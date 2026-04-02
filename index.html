@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HardCore Academy — Formation Hardware</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --card: #1a1a26;
+      --border: #2a2a40;
+      --accent: #00f0a0;
+      --accent2: #7c5cfc;
+      --accent3: #ff4d6d;
+      --text: #e8e8f0;
+      --muted: #7a7a99;
+      --gold: #f5c518;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:var(--bg); color:var(--text); font-family:var(--sans); min-height:100vh; overflow-x:hidden; }
+    body::before {
+      content:''; position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events:none; z-index:9999; opacity:0.3;
+    }
+
+    /* ─── HEADER ─── */
+    header { padding:2rem 3rem; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); position:sticky; top:0; background:rgba(10,10,15,0.92); backdrop-filter:blur(12px); z-index:100; }
+    .logo { font-family:var(--mono); font-size:1.1rem; color:var(--accent); letter-spacing:-0.02em; }
+    .logo span { color:var(--muted); }
+    nav { display:flex; gap:2rem; }
+    nav a { font-family:var(--mono); font-size:0.8rem; color:var(--muted); text-decoration:none; letter-spacing:0.05em; text-transform:uppercase; transition:color 0.2s; }
+    nav a:hover { color:var(--accent); }
+
+    /* ─── HERO ─── */
+    .hero { padding:6rem 3rem 4rem; position:relative; overflow:hidden; }
+    .hero-grid { position:absolute; inset:0; background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px); background-size:60px 60px; opacity:0.3; mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 30%,transparent 100%); }
+    .hero-glow { position:absolute; width:600px; height:600px; border-radius:50%; background:radial-gradient(circle,rgba(0,240,160,0.08) 0%,transparent 70%); top:-100px; left:-100px; pointer-events:none; }
+    .hero-content { position:relative; max-width:800px; }
+    .badge { display:inline-flex; align-items:center; gap:0.4rem; font-family:var(--mono); font-size:0.72rem; color:var(--accent); border:1px solid rgba(0,240,160,0.3); padding:0.3rem 0.8rem; border-radius:2px; margin-bottom:2rem; letter-spacing:0.08em; text-transform:uppercase; animation:fadeIn 0.6s ease; }
+    .badge::before { content:'◆'; font-size:0.5rem; }
+    h1 { font-size:clamp(3rem,7vw,6rem); font-weight:800; line-height:0.95; margin-bottom:1.5rem; animation:slideUp 0.7s ease; }
+    h1 em { font-style:normal; color:transparent; -webkit-text-stroke:1px var(--accent); }
+    .hero p { font-size:1.1rem; color:var(--muted); max-width:500px; line-height:1.7; margin-bottom:3rem; animation:slideUp 0.8s ease; }
+    .hero-stats { display:flex; gap:3rem; animation:slideUp 0.9s ease; }
+    .stat-item { text-align:left; }
+    .stat-num { font-family:var(--mono); font-size:1.8rem; font-weight:700; color:var(--accent); }
+    .stat-label { font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; }
+
+    /* ─── LAYOUT ─── */
+    .container { max-width:1300px; margin:0 auto; padding:0 3rem; }
+    .section-header { display:flex; align-items:baseline; gap:1rem; margin-bottom:2.5rem; }
+    .section-num { font-family:var(--mono); font-size:0.75rem; color:var(--accent2); border:1px solid var(--accent2); padding:0.2rem 0.5rem; border-radius:2px; }
+    .section-title { font-size:1.8rem; font-weight:800; color:var(--text); }
+    .section-line { flex:1; height:1px; background:linear-gradient(90deg,var(--border),transparent); }
+
+    /* ─── CARDS ─── */
+    section.lessons { padding:4rem 0; }
+    .lessons-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:1.5rem; }
+    .lesson-card { background:var(--card); border:1px solid var(--border); border-radius:4px; overflow:hidden; cursor:pointer; transition:border-color 0.25s,transform 0.2s,box-shadow 0.25s; text-decoration:none; display:block; animation:fadeIn 0.5s ease both; }
+    .lesson-card:hover { border-color:var(--accent); transform:translateY(-4px); box-shadow:0 20px 60px rgba(0,240,160,0.08); }
+    .card-top { padding:1.5rem; display:flex; align-items:flex-start; justify-content:space-between; }
+    .card-icon { width:48px; height:48px; border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
+    .card-meta { text-align:right; font-family:var(--mono); font-size:0.7rem; color:var(--muted); }
+    .card-level { display:inline-block; padding:0.2rem 0.6rem; border-radius:2px; font-size:0.65rem; font-family:var(--mono); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.3rem; }
+    .level-debutant { background:rgba(0,240,160,0.1); color:var(--accent); }
+    .level-intermediaire { background:rgba(124,92,252,0.1); color:var(--accent2); }
+    .level-avance { background:rgba(255,77,109,0.1); color:var(--accent3); }
+    .card-body { padding:0 1.5rem 1.5rem; }
+    .card-body h3 { font-size:1.1rem; font-weight:700; margin-bottom:0.5rem; color:var(--text); }
+    .card-body p { font-size:0.85rem; color:var(--muted); line-height:1.6; }
+    .card-footer { border-top:1px solid var(--border); padding:0.9rem 1.5rem; display:flex; align-items:center; justify-content:space-between; font-family:var(--mono); font-size:0.72rem; color:var(--muted); }
+    .card-footer .arrow { color:var(--accent); transition:transform 0.2s; }
+    .lesson-card:hover .arrow { transform:translateX(4px); }
+
+    /* ─── MODAL ─── */
+    .overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.85); backdrop-filter:blur(8px); z-index:200; align-items:center; justify-content:center; padding:2rem; }
+    .overlay.open { display:flex; }
+    .modal { background:var(--surface); border:1px solid var(--border); border-radius:6px; width:100%; max-width:820px; max-height:90vh; overflow-y:auto; animation:popIn 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+    .modal-header { padding:2rem 2.5rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; justify-content:space-between; position:sticky; top:0; background:var(--surface); z-index:10; }
+    .modal-header h2 { font-size:1.5rem; font-weight:800; }
+    .modal-close { background:none; border:1px solid var(--border); color:var(--muted); font-size:1.2rem; cursor:pointer; padding:0.2rem 0.7rem; border-radius:2px; font-family:var(--mono); transition:all 0.2s; }
+    .modal-close:hover { border-color:var(--accent3); color:var(--accent3); }
+    .modal-body { padding:2rem 2.5rem 2.5rem; }
+    .modal-body h3 { font-size:1rem; font-weight:700; color:var(--accent); margin:2rem 0 0.75rem; font-family:var(--mono); text-transform:uppercase; letter-spacing:0.06em; }
+    .modal-body h3:first-child { margin-top:0; }
+    .modal-body p { font-size:0.9rem; color:var(--muted); line-height:1.8; margin-bottom:1rem; }
+    .modal-body ul { list-style:none; margin-bottom:1rem; }
+    .modal-body ul li { font-size:0.88rem; color:var(--muted); padding:0.4rem 0 0.4rem 1.5rem; position:relative; line-height:1.6; }
+    .modal-body ul li::before { content:'▸'; position:absolute; left:0; color:var(--accent); }
+    .schema-box { background:var(--bg); border:1px solid var(--border); border-radius:4px; padding:1.5rem; font-family:var(--mono); font-size:0.78rem; color:var(--accent); margin:1.5rem 0; line-height:1.9; overflow-x:auto; }
+    .schema-box .dim { color:var(--muted); }
+    .schema-box .hi { color:var(--accent2); }
+    .schema-box .hi2 { color:var(--accent3); }
+    .quiz-box { background:rgba(124,92,252,0.05); border:1px solid rgba(124,92,252,0.2); border-radius:4px; padding:1.5rem; margin-top:2rem; }
+    .quiz-box h4 { font-family:var(--mono); font-size:0.8rem; color:var(--accent2); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1rem; }
+    .quiz-box p { font-size:0.9rem; color:var(--text); margin-bottom:1rem; }
+    .quiz-options { display:flex; flex-direction:column; gap:0.5rem; }
+    .quiz-btn { background:none; border:1px solid var(--border); color:var(--muted); padding:0.6rem 1rem; border-radius:3px; cursor:pointer; font-family:var(--sans); font-size:0.85rem; text-align:left; transition:all 0.2s; }
+    .quiz-btn:hover { border-color:var(--accent2); color:var(--text); }
+    .quiz-btn.correct { border-color:var(--accent); color:var(--accent); background:rgba(0,240,160,0.05); }
+    .quiz-btn.wrong { border-color:var(--accent3); color:var(--accent3); background:rgba(255,77,109,0.05); }
+    .quiz-feedback { margin-top:0.75rem; font-size:0.82rem; font-family:var(--mono); display:none; }
+    .quiz-feedback.show { display:block; }
+
+    /* ─── AUTH ─── */
+    #auth-screen { position:fixed; inset:0; z-index:5000; background:radial-gradient(ellipse 90% 70% at 50% 30%,rgba(0,240,160,0.06) 0%,transparent 60%),var(--bg); display:flex; align-items:center; justify-content:center; padding:1.5rem; }
+    #auth-screen.hidden { display:none; }
+    .auth-card { width:100%; max-width:430px; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .auth-top { padding:2rem 2.5rem 1.5rem; border-bottom:1px solid var(--border); background:linear-gradient(135deg,rgba(0,240,160,0.04),rgba(124,92,252,0.04)); }
+    .auth-logo-text { font-family:var(--mono); font-size:1rem; color:var(--accent); margin-bottom:1.2rem; }
+    .auth-tabs { display:flex; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:3px; }
+    .auth-tab { flex:1; padding:0.55rem; text-align:center; font-family:var(--mono); font-size:0.75rem; color:var(--muted); cursor:pointer; border-radius:4px; border:none; background:none; text-transform:uppercase; letter-spacing:0.05em; transition:all 0.2s; }
+    .auth-tab.active { background:var(--card); color:var(--accent); }
+    .auth-body { padding:2rem 2.5rem; }
+    .auth-form { display:none; flex-direction:column; gap:1rem; }
+    .auth-form.active { display:flex; }
+    .field-label { font-family:var(--mono); font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.35rem; display:block; }
+    .field-input { width:100%; padding:0.75rem 1rem; background:var(--bg); border:1px solid var(--border); border-radius:5px; color:var(--text); font-family:var(--mono); font-size:0.85rem; outline:none; transition:border-color 0.2s; }
+    .field-input:focus { border-color:var(--accent); }
+    .field-input::placeholder { color:var(--muted); }
+    .auth-btn { width:100%; padding:0.85rem; background:var(--accent); color:#000; border:none; border-radius:5px; font-family:var(--sans); font-size:0.95rem; font-weight:700; cursor:pointer; margin-top:0.5rem; transition:opacity 0.2s,transform 0.15s; }
+    .auth-btn:hover { opacity:0.88; transform:translateY(-1px); }
+    .auth-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .auth-err { font-family:var(--mono); font-size:0.75rem; color:var(--accent3); text-align:center; padding:0.5rem; background:rgba(255,77,109,0.08); border:1px solid rgba(255,77,109,0.2); border-radius:4px; display:none; }
+    .auth-err.show { display:block; }
+    .auth-ok { font-family:var(--mono); font-size:0.75rem; color:var(--accent); text-align:center; padding:0.5rem; background:rgba(0,240,160,0.08); border:1px solid rgba(0,240,160,0.2); border-radius:4px; display:none; }
+    .auth-ok.show { display:block; }
+    .auth-note { font-size:0.75rem; color:var(--muted); text-align:center; font-family:var(--mono); margin-top:0.25rem; }
+    .auth-note span { color:var(--accent2); cursor:pointer; }
+    .auth-note span:hover { text-decoration:underline; }
+
+    /* ─── HEADER USER ─── */
+    .header-user { display:flex; align-items:center; gap:1rem; }
+    .user-badge { display:flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.75rem; color:var(--muted); }
+    .user-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; font-family:var(--mono); }
+    .avatar-admin { background:rgba(245,197,24,0.15); color:var(--gold); border:1px solid rgba(245,197,24,0.3); }
+    .avatar-member { background:rgba(124,92,252,0.15); color:var(--accent2); border:1px solid rgba(124,92,252,0.3); }
+    .role-tag { font-family:var(--mono); font-size:0.65rem; padding:0.15rem 0.5rem; border-radius:3px; text-transform:uppercase; letter-spacing:0.06em; }
+    .role-admin { background:rgba(245,197,24,0.1); color:var(--gold); border:1px solid rgba(245,197,24,0.25); }
+    .role-member { background:rgba(124,92,252,0.1); color:var(--accent2); border:1px solid rgba(124,92,252,0.25); }
+    .btn-logout { font-family:var(--mono); font-size:0.7rem; color:var(--muted); background:none; border:1px solid var(--border); padding:0.3rem 0.7rem; border-radius:4px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
+    .btn-logout:hover { border-color:var(--accent3); color:var(--accent3); }
+    .btn-admin-panel { font-family:var(--mono); font-size:0.7rem; color:var(--gold); background:rgba(245,197,24,0.08); border:1px solid rgba(245,197,24,0.3); padding:0.3rem 0.7rem; border-radius:4px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
+    .btn-admin-panel:hover { background:rgba(245,197,24,0.15); }
+
+    /* ─── LOCK BADGES ─── */
+    .lesson-card.locked { cursor:default; }
+    .lesson-card.locked:hover { border-color:rgba(124,92,252,0.4); transform:none; box-shadow:none; }
+    .lock-badge { display:inline-flex; align-items:center; gap:0.35rem; font-family:var(--mono); font-size:0.65rem; color:var(--accent2); background:rgba(124,92,252,0.1); border:1px solid rgba(124,92,252,0.25); padding:0.2rem 0.55rem; border-radius:3px; }
+    .free-badge { display:inline-flex; align-items:center; gap:0.35rem; font-family:var(--mono); font-size:0.65rem; color:var(--accent); background:rgba(0,240,160,0.08); border:1px solid rgba(0,240,160,0.25); padding:0.2rem 0.55rem; border-radius:3px; }
+
+    /* ─── PAYWALL ─── */
+    .paywall-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.88); backdrop-filter:blur(10px); z-index:300; align-items:center; justify-content:center; padding:2rem; }
+    .paywall-overlay.open { display:flex; }
+    .paywall-box { background:var(--surface); border:1px solid var(--border); border-radius:10px; width:100%; max-width:480px; padding:2.5rem; text-align:center; animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+    .paywall-icon { font-size:3rem; margin-bottom:1rem; }
+    .paywall-box h2 { font-size:1.5rem; font-weight:800; margin-bottom:0.75rem; }
+    .paywall-box p { color:var(--muted); font-size:0.9rem; line-height:1.7; margin-bottom:1.5rem; }
+    .price-tag { font-family:var(--mono); font-size:2.5rem; font-weight:700; color:var(--accent); margin-bottom:0.25rem; }
+    .price-sub { font-size:0.8rem; color:var(--muted); font-family:var(--mono); margin-bottom:2rem; }
+    .paywall-perks { text-align:left; margin-bottom:2rem; }
+    .paywall-perks li { list-style:none; font-size:0.85rem; color:var(--muted); padding:0.3rem 0 0.3rem 1.4rem; position:relative; }
+    .paywall-perks li::before { content:'✓'; position:absolute; left:0; color:var(--accent); }
+    .paywall-cta { width:100%; padding:0.9rem; background:var(--accent); color:#000; border:none; border-radius:6px; font-family:var(--sans); font-size:1rem; font-weight:700; cursor:pointer; margin-bottom:0.75rem; transition:opacity 0.2s,transform 0.15s; display:flex; align-items:center; justify-content:center; gap:0.5rem; }
+    .paywall-cta:hover { opacity:0.85; transform:translateY(-1px); }
+    .paywall-cta:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .paywall-cta .spinner { width:16px; height:16px; border:2px solid rgba(0,0,0,0.3); border-top-color:#000; border-radius:50%; animation:spin 0.8s linear infinite; }
+    .paywall-cancel { background:none; border:1px solid var(--border); color:var(--muted); width:100%; padding:0.7rem; border-radius:6px; cursor:pointer; font-family:var(--mono); font-size:0.8rem; transition:all 0.2s; }
+    .paywall-cancel:hover { border-color:var(--accent3); color:var(--accent3); }
+    .stripe-badge { display:flex; align-items:center; justify-content:center; gap:0.4rem; margin-top:1rem; font-family:var(--mono); font-size:0.65rem; color:var(--muted); opacity:0.6; }
+
+    /* ─── ADMIN PANEL ─── */
+    #admin-panel { position:fixed; inset:0; z-index:400; background:var(--bg); overflow-y:auto; display:none; }
+    #admin-panel.open { display:block; }
+    .admin-header { padding:1.5rem 3rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:rgba(10,10,15,0.95); position:sticky; top:0; z-index:10; backdrop-filter:blur(12px); }
+    .admin-title { display:flex; align-items:center; gap:1rem; font-size:1.1rem; font-weight:800; }
+    .btn-close-admin { font-family:var(--mono); font-size:0.75rem; color:var(--muted); background:none; border:1px solid var(--border); padding:0.4rem 0.9rem; border-radius:4px; cursor:pointer; transition:all 0.2s; }
+    .btn-close-admin:hover { border-color:var(--accent); color:var(--accent); }
+    .admin-body { padding:3rem; max-width:1200px; margin:0 auto; }
+    .admin-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:3rem; }
+    .admin-stat-card { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:1.5rem; }
+    .admin-stat-card .stat-val { font-family:var(--mono); font-size:2rem; font-weight:700; color:var(--accent); }
+    .admin-stat-card .stat-val.gold { color:var(--gold); }
+    .admin-stat-card .stat-lbl { font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.3rem; }
+    .admin-section-title { font-family:var(--mono); font-size:0.75rem; color:var(--accent2); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border); }
+    .members-table { width:100%; border-collapse:collapse; }
+    .members-table th { font-family:var(--mono); font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; padding:0.75rem 1rem; text-align:left; border-bottom:1px solid var(--border); }
+    .members-table td { padding:0.85rem 1rem; font-size:0.85rem; border-bottom:1px solid rgba(42,42,64,0.5); color:var(--muted); }
+    .members-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .td-email { color:var(--text) !important; font-family:var(--mono); font-size:0.78rem !important; }
+    .td-role-admin { color:var(--gold) !important; font-family:var(--mono); font-size:0.7rem !important; }
+    .td-role-member { color:var(--accent2) !important; font-family:var(--mono); font-size:0.7rem !important; }
+    .td-premium { color:var(--accent) !important; font-family:var(--mono); font-size:0.7rem !important; }
+    .td-free { color:var(--muted) !important; font-family:var(--mono); font-size:0.7rem !important; }
+    .btn-del { background:none; border:1px solid rgba(255,77,109,0.3); color:var(--accent3); font-family:var(--mono); font-size:0.65rem; padding:0.2rem 0.5rem; border-radius:3px; cursor:pointer; transition:all 0.2s; }
+    .btn-del:hover { background:rgba(255,77,109,0.1); }
+    .btn-grant { background:none; border:1px solid rgba(0,240,160,0.3); color:var(--accent); font-family:var(--mono); font-size:0.65rem; padding:0.2rem 0.5rem; border-radius:3px; cursor:pointer; transition:all 0.2s; margin-right:0.3rem; }
+    .btn-grant:hover { background:rgba(0,240,160,0.1); }
+    .admin-lessons-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; }
+    .admin-lesson-row { background:var(--card); border:1px solid var(--border); border-radius:6px; padding:1.2rem; display:flex; align-items:center; justify-content:space-between; }
+    .admin-lesson-name { font-size:0.9rem; font-weight:700; }
+    .admin-lesson-num { font-family:var(--mono); font-size:0.7rem; color:var(--muted); margin-top:0.2rem; }
+    .toggle-access { font-family:var(--mono); font-size:0.7rem; padding:0.3rem 0.75rem; border-radius:4px; cursor:pointer; border:1px solid; transition:all 0.2s; }
+    .toggle-free { background:rgba(0,240,160,0.08); color:var(--accent); border-color:rgba(0,240,160,0.3); }
+    .toggle-paid { background:rgba(124,92,252,0.08); color:var(--accent2); border-color:rgba(124,92,252,0.3); }
+    .admin-info-box { background:rgba(245,197,24,0.05); border:1px solid rgba(245,197,24,0.2); border-radius:6px; padding:1.2rem 1.5rem; margin-bottom:2rem; font-family:var(--mono); font-size:0.78rem; color:var(--muted); line-height:1.8; }
+    .admin-info-box .hi { color:var(--gold); }
+
+    /* ─── REVENUS (nouveau) ─── */
+    .revenue-panel { background:linear-gradient(135deg,rgba(245,197,24,0.06),rgba(0,240,160,0.04)); border:1px solid rgba(245,197,24,0.25); border-radius:8px; padding:2rem; margin-bottom:2.5rem; }
+    .revenue-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+    .revenue-title { font-size:1.1rem; font-weight:800; color:var(--gold); display:flex; align-items:center; gap:0.5rem; }
+    .btn-refresh { font-family:var(--mono); font-size:0.7rem; color:var(--muted); background:none; border:1px solid var(--border); padding:0.35rem 0.8rem; border-radius:4px; cursor:pointer; transition:all 0.2s; }
+    .btn-refresh:hover { border-color:var(--accent); color:var(--accent); }
+    .revenue-stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+    .rev-stat { background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:6px; padding:1.2rem; }
+    .rev-stat .val { font-family:var(--mono); font-size:1.6rem; font-weight:700; color:var(--gold); }
+    .rev-stat .lbl { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.25rem; }
+    .payments-table { width:100%; border-collapse:collapse; }
+    .payments-table th { font-family:var(--mono); font-size:0.68rem; color:var(--muted); text-transform:uppercase; padding:0.6rem 0.8rem; text-align:left; border-bottom:1px solid var(--border); }
+    .payments-table td { padding:0.7rem 0.8rem; font-size:0.82rem; border-bottom:1px solid rgba(42,42,64,0.4); color:var(--muted); font-family:var(--mono); }
+    .payments-table tr:hover td { background:rgba(245,197,24,0.02); }
+    .pay-amount { color:var(--gold) !important; font-weight:700; }
+    .pay-status-paid { color:var(--accent) !important; }
+    .no-payments { text-align:center; padding:2rem; color:var(--muted); font-family:var(--mono); font-size:0.8rem; }
+    .stripe-link-btn { display:inline-flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.75rem; color:var(--accent2); background:rgba(124,92,252,0.08); border:1px solid rgba(124,92,252,0.3); padding:0.5rem 1rem; border-radius:4px; text-decoration:none; transition:all 0.2s; }
+    .stripe-link-btn:hover { background:rgba(124,92,252,0.15); }
+
+    /* ─── TOAST ─── */
+    #toast { position:fixed; bottom:2rem; right:2rem; z-index:9000; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.9rem 1.4rem; font-family:var(--mono); font-size:0.8rem; color:var(--text); box-shadow:0 8px 32px rgba(0,0,0,0.4); transform:translateY(100px); opacity:0; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); max-width:300px; }
+    #toast.show { transform:translateY(0); opacity:1; }
+    #toast.success { border-color:rgba(0,240,160,0.4); color:var(--accent); }
+    #toast.error { border-color:rgba(255,77,109,0.4); color:var(--accent3); }
+    #toast.info { border-color:rgba(124,92,252,0.4); color:var(--accent2); }
+
+    /* ─── LOADING OVERLAY ─── */
+    .loading-overlay { display:none; position:fixed; inset:0; background:rgba(5,5,10,0.7); backdrop-filter:blur(4px); z-index:9000; align-items:center; justify-content:center; flex-direction:column; gap:1rem; }
+    .loading-overlay.show { display:flex; }
+    .loading-spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
+    .loading-text { font-family:var(--mono); font-size:0.85rem; color:var(--muted); }
+
+    /* ─── FOOTER ─── */
+    footer { margin-top:6rem; border-top:1px solid var(--border); padding:2rem 3rem; display:flex; align-items:center; justify-content:space-between; font-family:var(--mono); font-size:0.75rem; color:var(--muted); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeIn { from{opacity:0}to{opacity:1} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)} }
+    @keyframes popIn { from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)} }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .lesson-card:nth-child(1){animation-delay:.05s}.lesson-card:nth-child(2){animation-delay:.10s}.lesson-card:nth-child(3){animation-delay:.15s}.lesson-card:nth-child(4){animation-delay:.20s}.lesson-card:nth-child(5){animation-delay:.25s}.lesson-card:nth-child(6){animation-delay:.30s}
+    ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+    @media(max-width:768px){header{padding:1.2rem 1.5rem}nav{display:none}.hero{padding:4rem 1.5rem 3rem}.container{padding:0 1.5rem}.modal-header,.modal-body{padding:1.5rem}.hero-stats{gap:2rem}footer{flex-direction:column;gap:0.5rem;text-align:center}.admin-body{padding:1.5rem}}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ LOADING ═══════════ -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Redirection vers Stripe…</div>
+</div>
+
+<!-- ═══════════ TOAST ═══════════ -->
+<div id="toast"></div>
+
+<!-- ═══════════ AUTH ═══════════ -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-top">
+      <div class="auth-logo-text">HARD<span style="color:var(--muted)">//</span>CORE <span style="color:var(--muted)">ACADEMY</span></div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('login')">Connexion</button>
+        <button class="auth-tab" onclick="switchTab('register')">Créer un compte</button>
+      </div>
+    </div>
+    <div class="auth-body">
+      <form class="auth-form active" id="form-login" onsubmit="doLogin(event)">
+        <div><label class="field-label">Adresse e-mail</label><input class="field-input" type="email" id="login-email" placeholder="ton@email.com" required/></div>
+        <div><label class="field-label">Mot de passe</label><input class="field-input" type="password" id="login-pwd" placeholder="••••••••" required/></div>
+        <div class="auth-err" id="login-err"></div>
+        <button class="auth-btn" type="submit" id="btn-login">Se connecter →</button>
+        <p class="auth-note">Pas encore de compte ? <span onclick="switchTab('register')">Créer un compte</span></p>
+      </form>
+      <form class="auth-form" id="form-register" onsubmit="doRegister(event)">
+        <div><label class="field-label">Prénom</label><input class="field-input" type="text" id="reg-name" placeholder="Ton prénom" required/></div>
+        <div><label class="field-label">Adresse e-mail</label><input class="field-input" type="email" id="reg-email" placeholder="ton@email.com" required/></div>
+        <div><label class="field-label">Mot de passe</label><input class="field-input" type="password" id="reg-pwd" placeholder="Min. 6 caractères" required minlength="6"/></div>
+        <div class="auth-err" id="reg-err"></div>
+        <div class="auth-ok" id="reg-ok"></div>
+        <button class="auth-btn" type="submit" id="btn-register">Créer mon compte →</button>
+        <p class="auth-note">Déjà un compte ? <span onclick="switchTab('login')">Se connecter</span></p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ ADMIN ═══════════ -->
+<div id="admin-panel">
+  <div class="admin-header">
+    <div class="admin-title"><span>👑</span><span style="color:var(--gold)">Panneau Administrateur</span><span style="color:var(--muted);font-size:0.75rem;font-family:var(--mono)">HardCore Academy</span></div>
+    <button class="btn-close-admin" onclick="closeAdmin()">← Retour au site</button>
+  </div>
+  <div class="admin-body">
+    <div class="admin-info-box"><span class="hi">👑 Connecté en tant qu'Administrateur</span><br>Accès complet : leçons, membres, revenus Stripe.</div>
+
+    <!-- Stats globales -->
+    <div class="admin-grid" id="admin-stats"></div>
+
+    <!-- ═══ REVENUS STRIPE ═══ -->
+    <div class="revenue-panel" id="revenue-panel">
+      <div class="revenue-header">
+        <div class="revenue-title">💰 Revenus &amp; Paiements Stripe</div>
+        <div style="display:flex;gap:0.75rem;align-items:center;">
+          <a class="stripe-link-btn" href="https://dashboard.stripe.com" target="_blank" rel="noopener">🔗 Dashboard Stripe</a>
+          <button class="btn-refresh" onclick="loadRevenue()">↻ Actualiser</button>
+        </div>
+      </div>
+      <div class="revenue-stats" id="revenue-stats">
+        <div class="rev-stat"><div class="val" id="rev-total">—</div><div class="lbl">Revenus totaux</div></div>
+        <div class="rev-stat"><div class="val" id="rev-count">—</div><div class="lbl">Transactions</div></div>
+        <div class="rev-stat"><div class="val" id="rev-today">—</div><div class="lbl">Aujourd'hui</div></div>
+        <div class="rev-stat"><div class="val" id="rev-month">—</div><div class="lbl">Ce mois</div></div>
+      </div>
+      <div id="payments-list"></div>
+    </div>
+
+    <!-- Membres -->
+    <div style="margin-bottom:2.5rem;">
+      <div class="admin-section-title">👥 Gestion des membres</div>
+      <div style="overflow-x:auto;"><table class="members-table" id="members-table"><thead><tr><th>Prénom</th><th>E-mail</th><th>Rôle</th><th>Accès</th><th>Inscrit le</th><th>Actions</th></tr></thead><tbody id="members-tbody"></tbody></table></div>
+    </div>
+
+    <!-- Leçons -->
+    <div>
+      <div class="admin-section-title">📚 Gestion des leçons</div>
+      <div class="admin-lessons-grid" id="admin-lessons-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PAYWALL ═══════════ -->
+<div class="paywall-overlay" id="paywall">
+  <div class="paywall-box">
+    <div class="paywall-icon">🔐</div>
+    <h2>Contenu Premium</h2>
+    <p>Cette leçon est réservée aux membres premium. Paiement sécurisé via Stripe — déblocage instantané après paiement.</p>
+    <div class="price-tag">2,99 €</div>
+    <div class="price-sub">accès illimité à vie · toutes les leçons</div>
+    <ul class="paywall-perks">
+      <li>8 leçons avancées débloquées instantanément</li>
+      <li>Schémas techniques & quiz interactifs</li>
+      <li>Section Diagnostic & Dépannage complète</li>
+      <li>Mises à jour incluses</li>
+    </ul>
+    <button class="paywall-cta" id="stripe-pay-btn" onclick="startStripeCheckout()">
+      <span id="pay-btn-text">💳 Payer 2,99 € par carte →</span>
+    </button>
+    <button class="paywall-cancel" onclick="closePaywall()">Non merci, continuer sans premium</button>
+    <div class="stripe-badge">🔒 Paiement sécurisé par <strong style="color:var(--accent2)">Stripe</strong> · Données jamais stockées</div>
+  </div>
+</div>
+
+<!-- ═══════════ MAIN SITE ═══════════ -->
+<header id="main-header" style="display:none;">
+  <div class="logo">HARD<span>//</span>CORE <span>ACADEMY</span></div>
+  <nav><a href="#lecons">Composants</a><a href="#depannage">Dépannage</a></nav>
+  <div class="header-user" id="header-user"></div>
+</header>
+
+<div class="hero" id="main-hero" style="display:none;">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-content">
+    <div class="badge">Formation Hardware — v4.0</div>
+    <h1>Maîtrise le<br><em>matériel</em><br>informatique.</h1>
+    <p>De l'électron aux composants, comprends comment fonctionne ton ordinateur — et comment le réparer toi-même.</p>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">09</div><div class="stat-label">Leçons</div></div>
+      <div class="stat-item"><div class="stat-num">5h+</div><div class="stat-label">Contenu</div></div>
+      <div class="stat-item"><div class="stat-num">2,99€</div><div class="stat-label">Premium</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container" id="main-content" style="display:none;">
+  <section class="lessons" id="lecons">
+    <div class="section-header"><span class="section-num">01</span><h2 class="section-title">Les leçons</h2><div class="section-line"></div></div>
+    <div class="lessons-grid" id="grid-lecons"></div>
+  </section>
+  <section class="lessons" id="depannage" style="padding-top:0;padding-bottom:4rem;">
+    <div class="section-header"><span class="section-num" style="color:var(--accent3);border-color:var(--accent3)">02</span><h2 class="section-title">Diagnostic & Dépannage</h2><div class="section-line"></div></div>
+    <div style="margin-bottom:1.5rem;padding:1rem 1.5rem;background:rgba(255,77,109,0.05);border:1px solid rgba(255,77,109,0.2);border-radius:4px;font-size:0.85rem;color:var(--muted);font-family:var(--mono);">⚠ <span style="color:var(--accent3)">SECTION PRATIQUE</span> — Diagnostic de pannes, remplacement de composants, outils et précautions de sécurité.</div>
+    <div class="lessons-grid" id="grid-depannage"></div>
+  </section>
+</div>
+
+<footer id="main-footer" style="display:none;">
+  <span>HardCore Academy © 2025</span>
+  <span style="display:flex;align-items:center;gap:0.5rem;">🔒 Paiements sécurisés par Stripe</span>
+</footer>
+
+<!-- ─── MODAL ─── -->
+<div class="overlay" id="overlay" onclick="closeOnOverlay(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header"><h2 id="modal-title">Titre</h2><button class="modal-close" onclick="closeLesson()">✕</button></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   ⚙ CONFIG — MODIFIER CES VALEURS
+═══════════════════════════════════════════════════ */
+const CONFIG = {
+  // URL de ton backend (ex: https://hardcore-academy.vercel.app)
+  // En local : http://localhost:3000
+  API_URL: 'http://localhost:3000',
+
+  // Clé admin secrète (doit correspondre à ADMIN_KEY dans .env)
+  ADMIN_KEY: 'change_moi_avec_une_cle_tres_longue_et_aleatoire_123456'
+};
+
+/* ═══════════════════════════════════════════════════
+   ADMIN ACCOUNT (local — vérification frontend)
+═══════════════════════════════════════════════════ */
+const ADMIN = {
+  email: 'kevinzeline942@gmail.com',
+  pwd:   atob('S2V2aW4wNjAyMDk='),
+  name:  'Kevin',
+  role:  'admin'
+};
+
+/* ═══════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════ */
+const SK_SESSION = 'hca_session';
+const SK_FREE    = 'hca_free_lessons';
+let freeLessons  = JSON.parse(localStorage.getItem(SK_FREE) || '["cpu"]');
+
+const LESSONS_META = [
+  { id:'cpu',             num:'01', icon:'🧠', color:'rgba(0,240,160,0.08)',   title:'Le Processeur (CPU)',           desc:'Architecture, cycles d\'horloge, cœurs, threads.',           level:'debutant',      time:'~25 min', section:'lecons'    },
+  { id:'ram',             num:'02', icon:'💾', color:'rgba(124,92,252,0.08)',  title:'La Mémoire RAM',                desc:'DDR4/DDR5, fréquence, latence CAS, dual channel.',            level:'debutant',      time:'~20 min', section:'lecons'    },
+  { id:'stockage',        num:'03', icon:'💿', color:'rgba(0,240,160,0.08)',   title:'Le Stockage (HDD & SSD)',       desc:'Plateaux magnétiques vs NAND Flash, NVMe, SATA.',             level:'debutant',      time:'~30 min', section:'lecons'    },
+  { id:'gpu',             num:'04', icon:'🎮', color:'rgba(255,77,109,0.08)',  title:'La Carte Graphique (GPU)',      desc:'Shader cores, VRAM, pipeline de rendu, IA.',                 level:'intermediaire', time:'~35 min', section:'lecons'    },
+  { id:'carte_mere',      num:'05', icon:'🔌', color:'rgba(124,92,252,0.08)', title:'La Carte Mère',                 desc:'Chipset, bus PCIe, sockets, VRM.',                           level:'intermediaire', time:'~40 min', section:'lecons'    },
+  { id:'reseau',          num:'06', icon:'🌐', color:'rgba(255,77,109,0.08)', title:'Les Réseaux & Interfaces',      desc:'Ethernet, Wi-Fi 6, USB 4, Thunderbolt.',                     level:'avance',        time:'~45 min', section:'lecons'    },
+  { id:'diagnostic',      num:'07', icon:'🔍', color:'rgba(255,77,109,0.08)', title:'Diagnostiquer une Panne',       desc:'Codes bips BIOS, POST, outils logiciels.',                   level:'intermediaire', time:'~40 min', section:'depannage' },
+  { id:'remplacement',    num:'08', icon:'🔧', color:'rgba(124,92,252,0.08)', title:'Remplacer les Composants',      desc:'CPU, RAM, SSD, GPU — gestes précis et compatibilité.',       level:'intermediaire', time:'~50 min', section:'depannage' },
+  { id:'pannes_courantes',num:'09', icon:'⚡', color:'rgba(255,77,109,0.08)', title:'Pannes Courantes & Solutions',  desc:'PC muet, écran noir, BSOD, surchauffe, GPU.',                level:'avance',        time:'~45 min', section:'depannage' },
+];
+
+/* ═══════════════════════════════════════════════════
+   SESSION
+═══════════════════════════════════════════════════ */
+function getSession()  { return JSON.parse(sessionStorage.getItem(SK_SESSION) || 'null'); }
+function saveSession(u){ sessionStorage.setItem(SK_SESSION, JSON.stringify(u)); }
+function clearSession(){ sessionStorage.removeItem(SK_SESSION); }
+function isAdmin(u)    { return u && u.role === 'admin'; }
+function isPremium(u)  { return u && (u.role === 'admin' || u.premium); }
+
+/* ═══════════════════════════════════════════════════
+   API HELPERS
+═══════════════════════════════════════════════════ */
+async function api(path, method='GET', body=null) {
+  const opts = { method, headers:{ 'Content-Type':'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  try {
+    const r = await fetch(CONFIG.API_URL + path, opts);
+    return await r.json();
+  } catch(e) {
+    console.warn('API offline, using localStorage fallback');
+    return null;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════════ */
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', tab==='login'?i===0:i===1));
+  document.getElementById('form-login').classList.toggle('active', tab==='login');
+  document.getElementById('form-register').classList.toggle('active', tab==='register');
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pwd   = document.getElementById('login-pwd').value;
+  const err   = document.getElementById('login-err');
+  const btn   = document.getElementById('btn-login');
+  err.classList.remove('show');
+  btn.disabled = true; btn.textContent = 'Connexion…';
+
+  // Admin check (local)
+  if (email === ADMIN.email.toLowerCase() && pwd === ADMIN.pwd) {
+    saveSession({ name:ADMIN.name, email:ADMIN.email, role:'admin', premium:true });
+    enterSite(); return;
+  }
+
+  // Backend login
+  const res = await api('/api/login', 'POST', { email, pwd });
+  if (res && res.ok) {
+    saveSession(res.user);
+    enterSite();
+  } else {
+    // Fallback localStorage
+    const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
+    const user  = users.find(u => u.email.toLowerCase()===email && u.pwd===pwd);
+    if (user) { saveSession(user); enterSite(); }
+    else { err.textContent = res?.error || '❌ Email ou mot de passe incorrect.'; err.classList.add('show'); btn.disabled=false; btn.textContent='Se connecter →'; }
+  }
+}
+
+async function doRegister(e) {
+  e.preventDefault();
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pwd   = document.getElementById('reg-pwd').value;
+  const err   = document.getElementById('reg-err');
+  const ok    = document.getElementById('reg-ok');
+  const btn   = document.getElementById('btn-register');
+  err.classList.remove('show'); ok.classList.remove('show');
+  btn.disabled=true; btn.textContent='Création…';
+
+  if (email === ADMIN.email.toLowerCase()) {
+    err.textContent='❌ Cet email est réservé.'; err.classList.add('show');
+    btn.disabled=false; btn.textContent='Créer mon compte →'; return;
+  }
+
+  // Try backend
+  const res = await api('/api/register', 'POST', { name, email, pwd });
+  if (res && res.ok) {
+    ok.textContent='✓ Compte créé ! Connexion en cours…'; ok.classList.add('show');
+    saveSession(res.user);
+    setTimeout(() => enterSite(), 1000);
+  } else {
+    // Fallback localStorage
+    const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
+    if (users.find(u => u.email.toLowerCase()===email)) {
+      err.textContent='❌ Un compte existe déjà avec cet email.'; err.classList.add('show');
+      btn.disabled=false; btn.textContent='Créer mon compte →'; return;
+    }
+    const newUser = { name, email, pwd, role:'member', premium:false, createdAt:new Date().toLocaleDateString('fr-FR') };
+    users.push(newUser); localStorage.setItem('hca_users', JSON.stringify(users));
+    ok.textContent='✓ Compte créé !'; ok.classList.add('show');
+    saveSession(newUser);
+    setTimeout(() => enterSite(), 800);
+  }
+}
+
+function logout() { clearSession(); showAuth(); toast('Au revoir 👋','info'); }
+
+/* ═══════════════════════════════════════════════════
+   SITE DISPLAY
+═══════════════════════════════════════════════════ */
+function showAuth() {
+  document.getElementById('auth-screen').style.display='flex';
+  ['main-header','main-hero','main-content'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('main-footer').style.display='none';
+}
+
+function enterSite() {
+  const u = getSession();
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('main-header').style.display='flex';
+  document.getElementById('main-hero').style.display='block';
+  document.getElementById('main-content').style.display='block';
+  document.getElementById('main-footer').style.display='flex';
+  renderHeader(u); renderCards();
+  toast('Bienvenue ' + u.name + ' 👋','success');
+}
+
+/* ═══════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════ */
+function renderHeader(u) {
+  const initials = u.name.slice(0,2).toUpperCase();
+  const isAdm    = isAdmin(u);
+  let html = `<div class="user-badge"><div class="user-avatar ${isAdm?'avatar-admin':'avatar-member'}">${initials}</div><div><div style="color:var(--text);font-size:0.82rem;">${u.name}</div><div class="role-tag ${isAdm?'role-admin':'role-member'}">${isAdm?'👑 Admin':'Membre'}</div></div></div>`;
+  if (isAdm) html += `<button class="btn-admin-panel" onclick="openAdmin()">⚙ Admin</button>`;
+  if (!isAdm && !isPremium(u)) html += `<button style="color:var(--accent);background:rgba(0,240,160,0.08);border:1px solid rgba(0,240,160,0.3);font-family:var(--mono);font-size:0.7rem;padding:0.3rem 0.7rem;border-radius:4px;cursor:pointer;" onclick="openPaywall()">⭐ Passer Premium</button>`;
+  if (isPremium(u) && !isAdm) html += `<span style="font-family:var(--mono);font-size:0.7rem;color:var(--accent);">⭐ Premium</span>`;
+  html += `<button class="btn-logout" onclick="logout()">Déconnexion</button>`;
+  document.getElementById('header-user').innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════════
+   RENDER CARDS
+═══════════════════════════════════════════════════ */
+function renderCards() {
+  const u = getSession();
+  const lvlClass = { debutant:'level-debutant', intermediaire:'level-intermediaire', avance:'level-avance' };
+  freeLessons = JSON.parse(localStorage.getItem(SK_FREE) || '["cpu"]');
+  ['lecons','depannage'].forEach(sec => {
+    const meta = LESSONS_META.filter(l=>l.section===sec);
+    document.getElementById('grid-'+sec).innerHTML = meta.map(l => {
+      const isFree   = freeLessons.includes(l.id);
+      const hasAccess= isAdmin(u) || isPremium(u) || isFree;
+      const badge    = isFree ? `<span class="free-badge">🆓 Gratuit</span>` : `<span class="lock-badge">🔒 2,99€</span>`;
+      return `<a class="lesson-card ${hasAccess?'':'locked'}" onclick="${hasAccess?`openLesson('${l.id}')`:'openPaywall()'}">
+        <div class="card-top"><div class="card-icon" style="background:${l.color}">${l.icon}</div><div class="card-meta"><div class="card-level ${lvlClass[l.level]}">${l.level.charAt(0).toUpperCase()+l.level.slice(1)}</div><div>${l.time}</div></div></div>
+        <div class="card-body"><h3>${l.title}</h3><p>${l.desc}</p></div>
+        <div class="card-footer"><span>${badge}</span><span style="display:flex;align-items:center;gap:0.4rem"><span style="font-family:var(--mono);font-size:0.72rem;color:var(--muted)">Leçon ${l.num}</span><span class="arrow">${hasAccess?'→':'🔒'}</span></span></div>
+      </a>`;
+    }).join('');
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   STRIPE CHECKOUT
+═══════════════════════════════════════════════════ */
+async function startStripeCheckout() {
+  const u = getSession();
+  if (!u) return;
+  const btn = document.getElementById('stripe-pay-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<div class="spinner"></div> Préparation du paiement…`;
+  document.getElementById('loading-overlay').classList.add('show');
+
+  const res = await api('/api/create-checkout', 'POST', { email: u.email, userName: u.name });
+
+  if (res && res.url) {
+    // Sauvegarder l'email pour vérifier après retour
+    sessionStorage.setItem('hca_pending_premium', u.email);
+    window.location.href = res.url; // Redirection vers Stripe
+  } else {
+    document.getElementById('loading-overlay').classList.remove('show');
+    btn.disabled = false;
+    btn.innerHTML = `<span id="pay-btn-text">💳 Payer 2,99 € par carte →</span>`;
+    toast('❌ Erreur de connexion au serveur. Réessaie.', 'error');
+  }
+}
+
+// ─── Vérifier le retour depuis Stripe ─────────────────────
+async function checkPaymentReturn() {
+  const params  = new URLSearchParams(window.location.search);
+  const status  = params.get('payment');
+  const session = params.get('session_id');
+
+  if (status === 'success' && session) {
+    // Nettoyer l'URL
+    window.history.replaceState({}, '', window.location.pathname);
+
+    const u = getSession();
+    if (!u) return;
+
+    toast('⏳ Vérification du paiement…', 'info');
+
+    // Polling : vérifier que le webhook a bien activé le premium
+    let attempts = 0;
+    const poll = setInterval(async () => {
+      attempts++;
+      const res = await api(`/api/check-premium/${encodeURIComponent(u.email)}`);
+      if (res?.premium) {
+        clearInterval(poll);
+        // Mettre à jour la session
+        u.premium = true; saveSession(u);
+        // Mettre à jour localStorage fallback
+        const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
+        const idx   = users.findIndex(x => x.email.toLowerCase() === u.email.toLowerCase());
+        if (idx > -1) { users[idx].premium = true; localStorage.setItem('hca_users', JSON.stringify(users)); }
+        renderHeader(u); renderCards();
+        toast('🎉 Paiement confirmé ! Accès Premium activé.', 'success');
+      }
+      if (attempts >= 10) {
+        clearInterval(poll);
+        toast('⚠ Paiement reçu — activation en cours (peut prendre quelques minutes).', 'info');
+      }
+    }, 2000); // toutes les 2 secondes
+  }
+
+  if (status === 'cancelled') {
+    window.history.replaceState({}, '', window.location.pathname);
+    toast('Paiement annulé.', 'info');
+  }
+}
+
+function openPaywall()  { document.getElementById('paywall').classList.add('open'); }
+function closePaywall() { document.getElementById('paywall').classList.remove('open'); }
+
+/* ═══════════════════════════════════════════════════
+   ADMIN PANEL
+═══════════════════════════════════════════════════ */
+function openAdmin() {
+  if (!isAdmin(getSession())) return;
+  document.getElementById('admin-panel').classList.add('open');
+  renderAdminStats();
+  renderMembersTable();
+  renderAdminLessons();
+  loadRevenue();
+}
+function closeAdmin() { document.getElementById('admin-panel').classList.remove('open'); }
+
+function renderAdminStats() {
+  const users   = JSON.parse(localStorage.getItem('hca_users') || '[]');
+  const premium = users.filter(u=>u.premium).length;
+  document.getElementById('admin-stats').innerHTML = `
+    <div class="admin-stat-card"><div class="stat-val">${users.length}</div><div class="stat-lbl">Membres inscrits</div></div>
+    <div class="admin-stat-card"><div class="stat-val">${premium}</div><div class="stat-lbl">Comptes Premium</div></div>
+    <div class="admin-stat-card"><div class="stat-val">${LESSONS_META.length}</div><div class="stat-lbl">Leçons totales</div></div>
+    <div class="admin-stat-card"><div class="stat-val">${freeLessons.length}</div><div class="stat-lbl">Leçons gratuites</div></div>`;
+}
+
+/* ─── Charger les revenus depuis le backend ─────────────── */
+async function loadRevenue() {
+  const res = await api(`/api/admin/stats?key=${encodeURIComponent(CONFIG.ADMIN_KEY)}`);
+  if (!res) {
+    document.getElementById('payments-list').innerHTML = `<div class="no-payments">⚠ Backend non connecté — configure CONFIG.API_URL et ADMIN_KEY<br><small style="opacity:0.6">Voir le guide d'installation ci-dessous</small></div>`;
+    return;
+  }
+
+  document.getElementById('rev-total').textContent = res.revenue + ' €';
+  document.getElementById('rev-count').textContent  = res.payments.length;
+
+  // Paiements aujourd'hui
+  const today    = new Date().toDateString();
+  const todayAmt = res.payments.filter(p => new Date(p.date).toDateString()===today).reduce((s,p)=>s+p.amount,0);
+  document.getElementById('rev-today').textContent = todayAmt.toFixed(2) + ' €';
+
+  // Paiements ce mois
+  const now      = new Date();
+  const monthAmt = res.payments.filter(p => { const d=new Date(p.date); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear(); }).reduce((s,p)=>s+p.amount,0);
+  document.getElementById('rev-month').textContent = monthAmt.toFixed(2) + ' €';
+
+  if (res.payments.length === 0) {
+    document.getElementById('payments-list').innerHTML = `<div class="no-payments">Aucun paiement enregistré pour l'instant.</div>`;
+    return;
+  }
+
+  document.getElementById('payments-list').innerHTML = `
+    <table class="payments-table">
+      <thead><tr><th>Date</th><th>Email</th><th>Montant</th><th>Statut</th><th>Session Stripe</th></tr></thead>
+      <tbody>
+        ${res.payments.map(p=>`<tr>
+          <td>${new Date(p.date).toLocaleString('fr-FR')}</td>
+          <td>${p.email}</td>
+          <td class="pay-amount">${p.amount} ${p.currency}</td>
+          <td class="pay-status-paid">✓ ${p.status}</td>
+          <td style="font-size:0.7rem;opacity:0.5">${p.id.substring(0,20)}…</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function renderMembersTable() {
+  const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
+  const adminRow = `<tr><td style="color:var(--text)">Kevin</td><td class="td-email">${ADMIN.email}</td><td class="td-role-admin">👑 Admin</td><td class="td-premium">∞ Illimité</td><td style="font-family:var(--mono);font-size:0.7rem;">Fondateur</td><td>—</td></tr>`;
+  if (users.length===0) { document.getElementById('members-tbody').innerHTML=adminRow+`<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem;font-family:var(--mono);font-size:0.8rem;">Aucun membre inscrit.</td></tr>`; return; }
+  const rows = users.map((u,i)=>`<tr><td style="color:var(--text)">${u.name}</td><td class="td-email">${u.email}</td><td class="${u.role==='admin'?'td-role-admin':'td-role-member'}">${u.role==='admin'?'👑 Admin':'Membre'}</td><td class="${u.premium?'td-premium':'td-free'}">${u.premium?'⭐ Premium':'Gratuit'}</td><td style="font-family:var(--mono);font-size:0.7rem;">${u.createdAt||'—'}</td><td>${!u.premium?`<button class="btn-grant" onclick="grantPremium(${i})">⭐ Offrir</button>`:''}<button class="btn-del" onclick="deleteMember(${i})">✕</button></td></tr>`).join('');
+  document.getElementById('members-tbody').innerHTML = adminRow + rows;
+}
+
+function grantPremium(i) {
+  const users=JSON.parse(localStorage.getItem('hca_users')||'[]');
+  users[i].premium=true; localStorage.setItem('hca_users',JSON.stringify(users));
+  // Sync backend
+  api('/api/admin/grant-premium','POST',{key:CONFIG.ADMIN_KEY, email:users[i].email, grant:true});
+  renderMembersTable(); renderAdminStats();
+  toast('⭐ Premium offert à '+users[i].name,'success');
+}
+function deleteMember(i) {
+  const users=JSON.parse(localStorage.getItem('hca_users')||'[]');
+  const name=users[i].name; users.splice(i,1);
+  localStorage.setItem('hca_users',JSON.stringify(users));
+  renderMembersTable(); renderAdminStats();
+  toast('🗑 '+name+' supprimé','error');
+}
+
+function renderAdminLessons() {
+  freeLessons = JSON.parse(localStorage.getItem(SK_FREE)||'["cpu"]');
+  document.getElementById('admin-lessons-list').innerHTML = LESSONS_META.map(l=>{
+    const isFree=freeLessons.includes(l.id);
+    return `<div class="admin-lesson-row"><div><div class="admin-lesson-name">${l.icon} ${l.title}</div><div class="admin-lesson-num">Leçon ${l.num}</div></div><button class="toggle-access ${isFree?'toggle-free':'toggle-paid'}" onclick="toggleFree('${l.id}')">${isFree?'🆓 Gratuit':'🔒 Payant'}</button></div>`;
+  }).join('');
+}
+function toggleFree(id) {
+  freeLessons=JSON.parse(localStorage.getItem(SK_FREE)||'["cpu"]');
+  if(freeLessons.includes(id)){if(freeLessons.length<=1){toast('⚠ Au moins une leçon gratuite requise.','error');return;}freeLessons=freeLessons.filter(x=>x!==id);toast('🔒 Leçon passée en payant','info');}
+  else{freeLessons.push(id);toast('🆓 Leçon passée en gratuit','success');}
+  localStorage.setItem(SK_FREE,JSON.stringify(freeLessons));
+  renderAdminLessons(); renderAdminStats(); renderCards();
+}
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════ */
+let toastTimer;
+function toast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='show '+type;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.className='';},3500);}
+
+/* ═══════════════════════════════════════════════════
+   LESSONS CONTENT
+═══════════════════════════════════════════════════ */
+const lessons = {
+  cpu:{title:"🧠 Le Processeur (CPU)",html:`<h3>Qu'est-ce qu'un CPU ?</h3><p>Le CPU (<strong style="color:var(--text)">Central Processing Unit</strong>) est le cerveau de l'ordinateur. Il exécute les instructions des programmes, effectue des calculs arithmétiques et logiques, et coordonne tous les autres composants.</p><h3>Architecture de base</h3><ul><li><strong style="color:var(--text)">ALU</strong> — effectue les additions, soustractions, comparaisons</li><li><strong style="color:var(--text)">CU</strong> — décode les instructions et orchestre l'exécution</li><li><strong style="color:var(--text)">Registres</strong> — mémoire ultra-rapide dans le CPU</li><li><strong style="color:var(--text)">Cache L1/L2/L3</strong> — mémoire tampon hiérarchique</li></ul><div class="schema-box"><span class="dim">┌──────────────────────────────────────┐</span>
+<span class="dim">│</span>              <span class="hi">CPU DIE</span>                    <span class="dim">│</span>
+<span class="dim">│  ┌─────────┐  ┌─────────┐            │</span>
+<span class="dim">│  │</span> <span>Core 0</span>  <span class="dim">│  │</span> <span>Core 1</span>  <span class="dim">│            │</span>
+<span class="dim">│  │ ALU·CU  │  │ ALU·CU  │            │</span>
+<span class="dim">│  │  L1/L2  │  │  L1/L2  │            │</span>
+<span class="dim">│  └────┬────┘  └────┬────┘            │</span>
+<span class="dim">│       └──────┬──────┘                 │</span>
+<span class="dim">│</span>          <span class="hi2">[ Cache L3 partagé ]</span>        <span class="dim">│</span>
+<span class="dim">│</span>          <span class="hi">[ Memory Controller ]</span>        <span class="dim">│</span>
+<span class="dim">└──────────────────────────────────────┘</span></div><h3>Fréquence & cycles d'horloge</h3><p>La <strong style="color:var(--text)">fréquence d'horloge</strong> (ex : 4,5 GHz) indique combien de cycles par seconde le CPU peut exécuter.</p><h3>Cœurs & Threads</h3><ul><li>Un <strong style="color:var(--text)">cœur physique</strong> est une unité de calcul indépendante</li><li>L'<strong style="color:var(--text)">HyperThreading</strong> simule 2 threads par cœur physique</li><li>Un CPU 8 cœurs / 16 threads exécute 16 flux simultanément</li></ul><h3>Cache : la clé de la vitesse</h3><ul><li><strong style="color:var(--text)">L1</strong> : ~32 Ko par cœur, &lt; 1 ns</li><li><strong style="color:var(--text)">L2</strong> : ~512 Ko par cœur, ~4 ns</li><li><strong style="color:var(--text)">L3</strong> : ~16–64 Mo partagé, ~30 ns</li></ul><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>Quel composant du CPU effectue les opérations mathématiques ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. L'Unité de Contrôle (CU)</button><button class="quiz-btn" onclick="answer(this,true)">B. L'ALU (Arithmetic Logic Unit)</button><button class="quiz-btn" onclick="answer(this,false)">C. Le cache L3</button><button class="quiz-btn" onclick="answer(this,false)">D. Le Memory Controller</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`},
+  ram:{title:"💾 La Mémoire RAM",html:`<h3>Définition</h3><p>La RAM (<strong style="color:var(--text)">Random Access Memory</strong>) est la mémoire de travail. Elle est <strong style="color:var(--text)">volatile</strong> : son contenu s'efface à l'extinction.</p><h3>Comment ça fonctionne ?</h3><p>Chaque cellule est un condensateur + transistor. Condensateur chargé = 1, déchargé = 0. Ces cellules doivent être rafraîchies des milliers de fois par seconde.</p><div class="schema-box"><span class="hi">Hiérarchie mémoire</span>
+<span class="hi">Registres CPU</span>  <span class="dim">│</span> &lt; 1 ns   <span class="dim">│</span> ~1 Ko
+<span class="hi">Cache L1</span>       <span class="dim">│</span>   1 ns   <span class="dim">│</span> ~32 Ko
+<span class="dim">Cache L2</span>       <span class="dim">│</span>   4 ns   <span class="dim">│</span> ~512 Ko
+<span class="dim">Cache L3</span>       <span class="dim">│</span>  30 ns   <span class="dim">│</span> ~32 Mo
+<span class="hi2">RAM DDR5</span>       <span class="dim">│</span>  80 ns   <span class="dim">│</span> 8–128 Go
+<span class="dim">SSD NVMe</span>       <span class="dim">│</span> 0.1 ms   <span class="dim">│</span> 256 Go+</div><h3>DDR4 vs DDR5</h3><ul><li><strong style="color:var(--text)">DDR4</strong> : 2133–3600 MHz, tension 1.2V</li><li><strong style="color:var(--text)">DDR5</strong> : 4800–8400 MHz, tension 1.1V, deux sous-canaux 32 bits</li></ul><h3>Dual Channel</h3><p>2 barrettes identiques en dual channel doublent la bande passante. Utiliser les slots A2+B2.</p><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>Pourquoi la RAM est-elle dite "volatile" ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. Elle chauffe beaucoup</button><button class="quiz-btn" onclick="answer(this,true)">B. Son contenu est perdu sans alimentation</button><button class="quiz-btn" onclick="answer(this,false)">C. Elle est explosive</button><button class="quiz-btn" onclick="answer(this,false)">D. Elle s'évapore avec le temps</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`},
+  stockage:{title:"💿 Le Stockage (HDD & SSD)",html:`<h3>Les deux grandes familles</h3><ul><li><strong style="color:var(--text)">HDD</strong> — mécanique, plateaux magnétiques rotatifs</li><li><strong style="color:var(--text)">SSD</strong> — électronique, mémoire Flash NAND</li></ul><div class="schema-box"><span class="dim">HDD                        SSD (NVMe M.2)</span>
+<span class="dim">┌─────────────────┐        ┌──────────────────┐</span>
+<span class="dim">│</span> <span class="hi">● Plateau mag.</span>   <span class="dim">│        │</span> <span class="hi">▓▓ NAND Flash ▓▓</span>  <span class="dim">│</span>
+<span class="dim">│   ↻ 7200 RPM    │        │  [Controller]    │</span>
+<span class="dim">│   → Tête R/W    │        │   [DRAM cache]   │</span>
+<span class="dim">│   Débit ~150Mo/s│        │  Débit ~7000Mo/s │</span>
+<span class="dim">│   Latence ~10ms │        │   Latence ~0.1ms │</span>
+<span class="dim">└─────────────────┘        └──────────────────┘</span></div><h3>Types NAND</h3><ul><li><strong style="color:var(--text)">SLC</strong> — ultra-rapide, durable</li><li><strong style="color:var(--text)">TLC</strong> — standard grand public</li><li><strong style="color:var(--text)">QLC</strong> — dense, moins durable</li></ul><h3>Interfaces</h3><ul><li><strong style="color:var(--text)">SATA III</strong> : ~550 Mo/s</li><li><strong style="color:var(--text)">NVMe PCIe 4.0</strong> : ~7000 Mo/s</li><li><strong style="color:var(--text)">NVMe PCIe 5.0</strong> : ~14000 Mo/s</li></ul><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>Quelle technologie SSD offre la meilleure endurance ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. QLC</button><button class="quiz-btn" onclick="answer(this,false)">B. TLC</button><button class="quiz-btn" onclick="answer(this,true)">C. SLC</button><button class="quiz-btn" onclick="answer(this,false)">D. MLC</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`},
+  gpu:{title:"🎮 La Carte Graphique (GPU)",html:`<h3>GPU vs CPU</h3><p>Le GPU possède des <strong style="color:var(--text)">milliers de petits cœurs</strong> pour exécuter des millions d'opérations simples en parallèle.</p><div class="schema-box"><span class="hi">CPU (i9-14900K)</span>        <span class="hi2">GPU (RTX 4090)</span>
+<span class="dim">24 cœurs complexes</span>            <span class="dim">16 384 CUDA cores</span>
+<span class="dim">Idéal : tâches séries</span>         <span class="dim">Idéal : parallélisme</span>
+<span class="dim">Cache L3 : 36 Mo</span>              <span class="dim">VRAM : 24 Go GDDR6X</span></div><h3>Pipeline de rendu 3D</h3><ul><li><strong style="color:var(--text)">Vertex shaders</strong> — transforment les coordonnées 3D en 2D</li><li><strong style="color:var(--text)">Rasterization</strong> — convertit les polygones en pixels</li><li><strong style="color:var(--text)">Ray Tracing</strong> — simule la physique réelle de la lumière</li></ul><h3>GPU & IA</h3><p>NVIDIA a ajouté des <strong style="color:var(--text)">Tensor Cores</strong> dédiés au calcul IA (RTX 30xx/40xx).</p><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>Pourquoi les GPUs sont-ils utilisés pour l'IA ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. Ils ont moins de chaleur</button><button class="quiz-btn" onclick="answer(this,false)">B. Ils ont plus de cache</button><button class="quiz-btn" onclick="answer(this,true)">C. Millions d'opérations simples en parallèle</button><button class="quiz-btn" onclick="answer(this,false)">D. Ils consomment moins</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`},
+  carte_mere:{title:"🔌 La Carte Mère",html:`<h3>Rôle central</h3><p>La carte mère connecte tous les composants et définit la compatibilité CPU, RAM et extensions.</p><div class="schema-box"><span class="dim">┌──────────────────────────────────────────┐</span>
+<span class="dim">│</span>  <span class="hi">[Socket CPU]</span>  <span class="dim">[Slots DDR5 x4]</span>            <span class="dim">│</span>
+<span class="dim">│  [VRM Phase]   [M.2 NVMe #1]             │</span>
+<span class="dim">│</span>  <span class="hi2">[Chipset]</span>     <span class="dim">[M.2 NVMe #2]             │</span>
+<span class="dim">│  [PCIe x16 GPU]                           │</span>
+<span class="dim">│  [PCIe x4]  [PCIe x1]  [SATA x6]        │</span>
+<span class="dim">└──────────────────────────────────────────┘</span></div><h3>Sockets</h3><ul><li><strong style="color:var(--text)">Intel LGA1700</strong> — Core 12e/13e/14e gen</li><li><strong style="color:var(--text)">AMD AM5</strong> — Ryzen 7000/9000 (DDR5)</li></ul><h3>VRM</h3><p>Les VRM convertissent les 12V en tensions précises pour le CPU (~1–1.4V).</p><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>À quoi sert le VRM ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. Afficher la vidéo intégrée</button><button class="quiz-btn" onclick="answer(this,true)">B. Réguler la tension du CPU</button><button class="quiz-btn" onclick="answer(this,false)">C. Gérer les ports USB</button><button class="quiz-btn" onclick="answer(this,false)">D. Refroidir le chipset</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`},
+  reseau:{title:"🌐 Les Réseaux & Interfaces",html:`<h3>Ethernet filaire</h3><ul><li><strong style="color:var(--text)">1 Gbps</strong> — Cat5e/Cat6</li><li><strong style="color:var(--text)">2.5 / 5 Gbps</strong> — gaming modernes</li><li><strong style="color:var(--text)">10 Gbps</strong> — datacenter</li></ul><div class="schema-box"><span class="dim">Norme      </span><span class="hi">Débit max</span>  <span class="dim">Bande</span>
+<span class="dim">Wi-Fi 5    </span><span class="hi">3.5 Gbps</span>   <span class="dim">5 GHz</span>
+<span class="dim">Wi-Fi 6    </span><span class="hi">9.6 Gbps</span>   <span class="dim">2.4 + 5 GHz</span>
+<span class="dim">Wi-Fi 7    </span><span class="hi">46 Gbps</span>    <span class="dim">2.4+5+6 GHz</span></div><h3>USB</h3><ul><li><strong style="color:var(--text)">USB 2.0</strong> — 480 Mbps</li><li><strong style="color:var(--text)">USB 3.2 Gen2</strong> — 10 Gbps</li><li><strong style="color:var(--text)">USB 4 Gen3</strong> — 40 Gbps</li></ul><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>Quelle norme Wi-Fi exploite 3 bandes simultanément ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. Wi-Fi 5</button><button class="quiz-btn" onclick="answer(this,false)">B. Wi-Fi 6</button><button class="quiz-btn" onclick="answer(this,false)">C. Wi-Fi 6E</button><button class="quiz-btn" onclick="answer(this,true)">D. Wi-Fi 7</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`},
+  diagnostic:{title:"🔍 Diagnostiquer une Panne",html:`<h3>La méthode : isoler pour identifier</h3><p>Le diagnostic suit une logique d'<strong style="color:var(--text)">élimination progressive</strong>.</p><div class="schema-box"><span class="hi">ARBRE DE DIAGNOSTIC</span>
+<span class="dim">Le PC s'allume ?</span>
+  <span class="dim">├── NON →</span> <span class="hi2">Vérif. alim. → câble 24-pin → bouton power</span>
+  <span class="dim">└── OUI, pas d'image →</span>
+        <span class="dim">├── Bips BIOS ?</span>
+             <span class="dim">├── OUI →</span> <span class="hi">Décoder le code bip</span>
+             <span class="dim">└── NON →</span> <span class="hi2">Test RAM slot par slot → GPU intégré</span></div><h3>Codes bips BIOS</h3><ul><li><strong style="color:var(--text)">1 bip court</strong> — POST réussi</li><li><strong style="color:var(--text)">3 bips longs</strong> — erreur RAM (AMI BIOS)</li><li><strong style="color:var(--text)">Bips continus</strong> — court-circuit ou RAM absente</li></ul><h3>Outils essentiels</h3><ul><li><strong style="color:var(--text)">MemTest86</strong> — test RAM sur 24h</li><li><strong style="color:var(--text)">CrystalDiskInfo</strong> — santé des disques SMART</li><li><strong style="color:var(--text)">HWiNFO64</strong> — températures temps réel</li></ul><h3>Températures critiques</h3><ul><li>CPU : alarme &gt; 90°C</li><li>GPU : alarme &gt; 85°C</li><li>SSD NVMe : alarme &gt; 70°C</li></ul><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>3 bips longs (AMI BIOS) = quel composant ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. Le CPU</button><button class="quiz-btn" onclick="answer(this,true)">B. La RAM</button><button class="quiz-btn" onclick="answer(this,false)">C. Le SSD</button><button class="quiz-btn" onclick="answer(this,false)">D. L'alimentation</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`},
+  remplacement:{title:"🔧 Remplacer les Composants",html:`<h3>⚠ Précautions OBLIGATOIRES</h3><ul><li><strong style="color:var(--accent3)">Éteindre ET débrancher</strong> du secteur</li><li><strong style="color:var(--text)">Antistatique</strong> — toucher une partie métallique</li><li><strong style="color:var(--text)">Surface non moquettée</strong></li></ul><div class="schema-box"><span class="hi">OUTILS RECOMMANDÉS</span>
+<span class="dim">✓</span> <span class="hi">Tournevis Philips #1/#2 magnétique</span>
+<span class="dim">✓</span> <span class="dim">Bracelet antistatique ESD</span>
+<span class="dim">✓</span> <span class="hi2">Pâte thermique (Arctic MX-4)</span>
+<span class="dim">✓</span> <span class="dim">Alcool isopropylique 90%+</span></div><h3>Changer la RAM</h3><ul><li>Appuyer sur les loquets — la barrette s'éjecte</li><li>Aligner l'encoche avec celle du slot</li><li>Pousser fermement jusqu'au clic</li></ul><h3>Changer un SSD M.2</h3><ul><li>Insérer à <strong style="color:var(--text)">30° d'angle</strong></li><li>Vérifier le type : NVMe ou SATA M.2 — incompatibles !</li></ul><h3>Changer le CPU</h3><ul><li><strong style="color:var(--accent3)">Ne JAMAIS toucher les broches</strong></li><li>Aligner le triangle d'orientation</li><li>Changer la pâte thermique (noisette ~0.3g)</li></ul><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>Quelle erreur est la plus dangereuse lors d'un remplacement CPU LGA ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. Trop de pâte thermique</button><button class="quiz-btn" onclick="answer(this,true)">B. Toucher/plier les broches du socket</button><button class="quiz-btn" onclick="answer(this,false)">C. Oublier de dévisser le levier</button><button class="quiz-btn" onclick="answer(this,false)">D. Pas de bracelet antistatique</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`},
+  pannes_courantes:{title:"⚡ Pannes Courantes & Solutions",html:`<h3>PC sans vie</h3><div class="schema-box"><span class="hi">CHECKLIST PC MORT</span>
+<span class="dim">□</span> Câble secteur branché ?
+<span class="dim">□</span> Interrupteur PSU en position I ?
+<span class="dim">□</span> Câble 24-pin clipsé sur la carte mère ?
+<span class="dim">□</span> Câble EPS 8-pin CPU branché ?
+<span class="dim">□</span> RAM bien enfoncée ?
+<span class="dim">□</span> Connecteur bouton power sur F_PANEL ?</div><h3>Écran noir</h3><ul><li>Vérifier le câble vidéo et le bon port</li><li>Tester chaque barrette RAM seule</li><li>Réinitialiser le BIOS : retirer la pile CR2032</li></ul><h3>Surchauffe & Throttling</h3><ul><li>Nettoyer les filtres à poussière</li><li>Changer la pâte thermique</li><li>Améliorer le flux d'air</li></ul><h3>HDD qui clique</h3><p style="color:var(--accent3);font-weight:700;">⚠ Panne mécanique imminente — sauvegarder EN URGENCE !</p><div class="quiz-box"><h4>🎯 Quiz rapide</h4><p>Ton HDD fait un bruit de clic. Première action ?</p><div class="quiz-options"><button class="quiz-btn" onclick="answer(this,false)">A. Défragmenter</button><button class="quiz-btn" onclick="answer(this,false)">B. Lancer un chkdsk</button><button class="quiz-btn" onclick="answer(this,true)">C. Sauvegarder immédiatement</button><button class="quiz-btn" onclick="answer(this,false)">D. Mettre à jour les drivers</button></div><div class="quiz-feedback" id="quiz-feedback"></div></div>`}
+};
+
+/* ═══════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════ */
+function openLesson(id){const l=lessons[id];document.getElementById('modal-title').textContent=l.title;document.getElementById('modal-body').innerHTML=l.html;document.getElementById('overlay').classList.add('open');document.getElementById('modal').scrollTop=0;}
+function closeLesson(){document.getElementById('overlay').classList.remove('open');}
+function closeOnOverlay(e){if(e.target===document.getElementById('overlay'))closeLesson();}
+function answer(btn,correct){const container=btn.closest('.quiz-options');const feedback=btn.closest('.quiz-box').querySelector('.quiz-feedback');container.querySelectorAll('.quiz-btn').forEach(b=>b.disabled=true);if(correct){btn.classList.add('correct');feedback.style.color='var(--accent)';feedback.textContent='✓ Bonne réponse !';}else{btn.classList.add('wrong');feedback.style.color='var(--accent3)';feedback.textContent='✗ Pas tout à fait — relis la leçon.';}feedback.classList.add('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLesson();closeAdmin();closePaywall();}});
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', () => {
+  const session = getSession();
+  if (session) { enterSite(); checkPaymentReturn(); }
+  else { showAuth(); }
+  // Vérifier retour Stripe même sans session (cas rare)
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('payment') === 'success') checkPaymentReturn();
+});
+</script>
+</body>
+</html>
