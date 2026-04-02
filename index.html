@@ -212,25 +212,11 @@
     .admin-info-box { background:rgba(245,197,24,0.05); border:1px solid rgba(245,197,24,0.2); border-radius:6px; padding:1.2rem 1.5rem; margin-bottom:2rem; font-family:var(--mono); font-size:0.78rem; color:var(--muted); line-height:1.8; }
     .admin-info-box .hi { color:var(--gold); }
 
-    /* ─── REVENUS (nouveau) ─── */
-    .revenue-panel { background:linear-gradient(135deg,rgba(245,197,24,0.06),rgba(0,240,160,0.04)); border:1px solid rgba(245,197,24,0.25); border-radius:8px; padding:2rem; margin-bottom:2.5rem; }
-    .revenue-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
-    .revenue-title { font-size:1.1rem; font-weight:800; color:var(--gold); display:flex; align-items:center; gap:0.5rem; }
-    .btn-refresh { font-family:var(--mono); font-size:0.7rem; color:var(--muted); background:none; border:1px solid var(--border); padding:0.35rem 0.8rem; border-radius:4px; cursor:pointer; transition:all 0.2s; }
-    .btn-refresh:hover { border-color:var(--accent); color:var(--accent); }
-    .revenue-stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:1rem; margin-bottom:1.5rem; }
-    .rev-stat { background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:6px; padding:1.2rem; }
-    .rev-stat .val { font-family:var(--mono); font-size:1.6rem; font-weight:700; color:var(--gold); }
-    .rev-stat .lbl { font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.05em; margin-top:0.25rem; }
-    .payments-table { width:100%; border-collapse:collapse; }
-    .payments-table th { font-family:var(--mono); font-size:0.68rem; color:var(--muted); text-transform:uppercase; padding:0.6rem 0.8rem; text-align:left; border-bottom:1px solid var(--border); }
-    .payments-table td { padding:0.7rem 0.8rem; font-size:0.82rem; border-bottom:1px solid rgba(42,42,64,0.4); color:var(--muted); font-family:var(--mono); }
-    .payments-table tr:hover td { background:rgba(245,197,24,0.02); }
-    .pay-amount { color:var(--gold) !important; font-weight:700; }
-    .pay-status-paid { color:var(--accent) !important; }
-    .no-payments { text-align:center; padding:2rem; color:var(--muted); font-family:var(--mono); font-size:0.8rem; }
-    .stripe-link-btn { display:inline-flex; align-items:center; gap:0.5rem; font-family:var(--mono); font-size:0.75rem; color:var(--accent2); background:rgba(124,92,252,0.08); border:1px solid rgba(124,92,252,0.3); padding:0.5rem 1rem; border-radius:4px; text-decoration:none; transition:all 0.2s; }
-    .stripe-link-btn:hover { background:rgba(124,92,252,0.15); }
+    /* ─── STRIPE DASHBOARD BTN ─── */
+    .btn-stripe-dashboard { display:inline-flex; align-items:center; gap:0.6rem; font-family:var(--mono); font-size:0.8rem; color:#fff; background:linear-gradient(135deg,#635bff,#7c71ff); border:none; padding:0.6rem 1.2rem; border-radius:6px; cursor:pointer; text-decoration:none; font-weight:700; transition:opacity 0.2s,transform 0.15s; letter-spacing:0.03em; }
+    .btn-stripe-dashboard:hover { opacity:0.88; transform:translateY(-1px); }
+
+    
 
     /* ─── TOAST ─── */
     #toast { position:fixed; bottom:2rem; right:2rem; z-index:9000; background:var(--card); border:1px solid var(--border); border-radius:6px; padding:0.9rem 1.4rem; font-family:var(--mono); font-size:0.8rem; color:var(--text); box-shadow:0 8px 32px rgba(0,0,0,0.4); transform:translateY(100px); opacity:0; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); max-width:300px; }
@@ -283,6 +269,7 @@
       <form class="auth-form active" id="form-login" onsubmit="doLogin(event)">
         <div><label class="field-label">Adresse e-mail</label><input class="field-input" type="email" id="login-email" placeholder="ton@email.com" required/></div>
         <div><label class="field-label">Mot de passe</label><input class="field-input" type="password" id="login-pwd" placeholder="••••••••" required/></div>
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.25rem;"><input type="checkbox" id="remember-me" style="accent-color:var(--accent);width:14px;height:14px;cursor:pointer;"/><label for="remember-me" style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);cursor:pointer;user-select:none;">Se souvenir de moi</label></div>
         <div class="auth-err" id="login-err"></div>
         <button class="auth-btn" type="submit" id="btn-login">Se connecter →</button>
         <p class="auth-note">Pas encore de compte ? <span onclick="switchTab('register')">Créer un compte</span></p>
@@ -312,8 +299,15 @@
     <!-- Stats globales -->
     <div class="admin-grid" id="admin-stats"></div>
 
-    <!-- ═══ REVENUS STRIPE ═══ -->
-    <div class="revenue-panel" id="revenue-panel">
+    <!-- ═══ STRIPE DASHBOARD ═══ -->
+    <div style="margin-bottom:2.5rem;">
+      <div class="admin-section-title">💳 Stripe</div>
+      <a class="btn-stripe-dashboard" href="https://dashboard.stripe.com/acct_1THYuZFdWWhEDe7b/test/dashboard" target="_blank" rel="noopener">
+        <svg width="16" height="16" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.5 18.5c0-1.4 1.1-1.9 2.9-1.9 2.6 0 5.9.8 8.5 2.2v-8c-2.8-1.1-5.6-1.5-8.5-1.5-7 0-11.6 3.6-11.6 9.7 0 9.5 13 8 13 12.1 0 1.6-1.4 2.2-3.3 2.2-2.9 0-6.5-1.2-9.4-2.8v8.1c3.2 1.4 6.4 2 9.4 2 7.1 0 12-3.5 12-9.7-.1-10.2-13.1-8.5-13-12.4z" fill="white"/></svg>
+        Dashboard Stripe →
+      </a>
+    </div>
+    <div style="display:none" id="revenue-panel">
       <div class="revenue-header">
         <div class="revenue-title">💰 Revenus &amp; Paiements Stripe</div>
         <div style="display:flex;gap:0.75rem;align-items:center;">
@@ -460,9 +454,9 @@ const LESSONS_META = [
 /* ═══════════════════════════════════════════════════
    SESSION
 ═══════════════════════════════════════════════════ */
-function getSession()  { return JSON.parse(sessionStorage.getItem(SK_SESSION) || 'null'); }
-function saveSession(u){ sessionStorage.setItem(SK_SESSION, JSON.stringify(u)); }
-function clearSession(){ sessionStorage.removeItem(SK_SESSION); }
+function getSession()  { return JSON.parse(sessionStorage.getItem(SK_SESSION) || localStorage.getItem(SK_SESSION) || 'null'); }
+function saveSession(u, remember){ sessionStorage.setItem(SK_SESSION, JSON.stringify(u)); if(remember) localStorage.setItem(SK_SESSION, JSON.stringify(u)); }
+function clearSession(){ sessionStorage.removeItem(SK_SESSION); localStorage.removeItem(SK_SESSION); }
 function isAdmin(u)    { return u && u.role === 'admin'; }
 function isPremium(u)  { return u && (u.role === 'admin' || u.premium); }
 
@@ -492,29 +486,30 @@ function switchTab(tab) {
 
 async function doLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const pwd   = document.getElementById('login-pwd').value;
-  const err   = document.getElementById('login-err');
-  const btn   = document.getElementById('btn-login');
+  const email    = document.getElementById('login-email').value.trim().toLowerCase();
+  const pwd      = document.getElementById('login-pwd').value;
+  const remember = document.getElementById('remember-me').checked;
+  const err      = document.getElementById('login-err');
+  const btn      = document.getElementById('btn-login');
   err.classList.remove('show');
   btn.disabled = true; btn.textContent = 'Connexion…';
 
   // Admin check (local)
   if (email === ADMIN.email.toLowerCase() && pwd === ADMIN.pwd) {
-    saveSession({ name:ADMIN.name, email:ADMIN.email, role:'admin', premium:true });
+    saveSession({ name:ADMIN.name, email:ADMIN.email, role:'admin', premium:true }, remember);
     enterSite(); return;
   }
 
   // Backend login
   const res = await api('/api/login', 'POST', { email, pwd });
   if (res && res.ok) {
-    saveSession(res.user);
+    saveSession(res.user, remember);
     enterSite();
   } else {
     // Fallback localStorage
     const users = JSON.parse(localStorage.getItem('hca_users') || '[]');
     const user  = users.find(u => u.email.toLowerCase()===email && u.pwd===pwd);
-    if (user) { saveSession(user); enterSite(); }
+    if (user) { saveSession(user, remember); enterSite(); }
     else { err.textContent = res?.error || '❌ Email ou mot de passe incorrect.'; err.classList.add('show'); btn.disabled=false; btn.textContent='Se connecter →'; }
   }
 }
@@ -876,8 +871,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLesson();close
 window.addEventListener('DOMContentLoaded', () => {
   const session = getSession();
   if (session) { enterSite(); checkPaymentReturn(); }
-  else { showAuth(); }
-  // Vérifier retour Stripe même sans session (cas rare)
+  else {
+    showAuth();
+    // Cocher "Se souvenir de moi" si une session persistante existe
+    if (localStorage.getItem('hca_session')) {
+      document.getElementById('remember-me').checked = true;
+    }
+  }
   const params = new URLSearchParams(window.location.search);
   if (params.get('payment') === 'success') checkPaymentReturn();
 });
